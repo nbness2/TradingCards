@@ -1,3 +1,4 @@
+from random import randint
 
 class Card:
     '''
@@ -17,10 +18,12 @@ class Pack:
     '''
        Base class for all packs
        These are values that are assumed to be correct to work correctly
-       packPrice = int (0->inf), cardsInPack = int (1->inf)
+       packPrice = int (0->inf)
+       cardsInPack = int (1->inf)
        cardTierChances = tuple (lowest rarity -> highest rarity)(add up to 100)
+       ~corresponds to the basic theme, set to 0 for no chance of that tier
        themeCardChance = int (1->100)
-       packTheme = Theme
+       packTheme = Theme (this is an extra theme in addition to the default basic theme)
     '''
     def __init__(self, packPrice, cardsInPack, cardTierChances, themeCardChance, packTheme):
         self._price = packPrice
@@ -47,3 +50,5 @@ class Theme:
         self._themeName = themeName
         self._themeTiers = themeTiers
         self._themeTierChances = themeTierChances
+
+themes = {'theme_basic' : Theme('Basic', ('Black', 'Green', 'Yellow', 'Blue', 'Purple', 'Red', 'White'), (55, 15, 12, 8, 5, 3, 2))}
