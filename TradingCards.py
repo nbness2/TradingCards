@@ -1,31 +1,49 @@
 
 class Card:
-    '''Base class for all cards'''
+    '''
+       Base class for all cards
+       These are values that are assumed to be correct to work correctly
+       cardName = str
+       cardTier = int
+       cardTheme = Theme
+    '''
     def __init__(self, cardName, cardTier, cardTheme):
-        '''cardName = str, cardTier = int, cardTheme = Theme'''
         self._cardName = cardName
         self._cardTier = cardTier
         self._cardTheme = cardTheme
         
 
 class Pack:
-    '''Base class for all packs'''
+    '''
+       Base class for all packs
+       These are values that are assumed to be correct to work correctly
+       packPrice = int (0->inf), cardsInPack = int (1->inf)
+       cardTierChances = tuple (lowest rarity -> highest rarity)(add up to 100)
+       themeCardChance = int (1->100)
+       packTheme = Theme
+    '''
     def __init__(self, packPrice, cardsInPack, cardTierChances, themeCardChance, packTheme):
-        '''packPrice = int (0->inf), cardsInPack = int (1->inf), cardTierChances = tuple (lowest rarity -> highest rarity) (must add up to 100), themeCardChance = int (1->100), packTheme = Theme'''
         self._price = packPrice
         self._cardsInPack = cardsInPack
         self._tierChances = cardTierChances
-        self._themeChance = themeCardChance # This chance is PER CARD not PER PACK. It will replace a card in the pack, not add a card to the pack.
+        self._themeChance = themeCardChance # This chance is PER CARD.
         self._packTheme = packTheme
 
     def openPack(self):
-        '''"Buys" and opens a pack of cards'''
+        '''
+           Generates the cards in the pack.
+        '''
         pass
 
 class Theme:
-    '''Base class for all themes'''
+    '''
+       Base class for all themes
+       These are values that are assumed to be correct to work correctly
+       themeName = str
+       themeTiers = tuple (lowest rarity -> highest rarity)
+       themeTierChances = tuple (should add up to 100)
+    '''
     def __init__(self, themeName, themeTiers, themeTierChances):
-        '''themeName = str, themeTiers = tuple (lowest rarity -> highest rarity) (must add to 100), themeTierChances = tuple'''
         self._themeName = themeName
         self._themeTiers = themeTiers
         self._themeTierChances = themeTierChances
