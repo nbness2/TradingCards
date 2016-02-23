@@ -1,0 +1,16 @@
+Card Pack Attributes:
+- Theme (Basic, Wooden, Sparkly, etc)
+- Tier chances (85% for blue, 10% for white, 5% for themed card (also has own tiers and chances), 5% for legendary)
+- Amount of cards (1-infinity)
+- Price for pack. Should be proportional to cost/card (including rarity and chances for themed cards)
+
+Card Attributes:
+- Theme (Basic, Wooden, Sparkly, etc) (usually decides how the card border, insert, and card image is designed)
+- Tier (Blue, White, All Natural Organic Vegan Redwood, Super Sparkly, etc.) (can also be denoted under the name on the insert)
+- Name (Usually denotes the object on the card image)
+
+Themed Card Attributes:
+- Availability (Limited Time "Production", Certain amount of this card of this rarity, etc)
+---- LIMITED AMOUNT CARDS WILL HAVE A UNIQUE HASH GIVEN TO THEM
+- Inherits theme ONLY FROM THE PACK THEY WERE BOUGHT FROM (No sparkly cards in wooden packs)
+---- DOES NOT APPLY TO BASIC, BASIC CARDS ARE IN EVERY PACK
