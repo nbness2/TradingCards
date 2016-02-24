@@ -14,3 +14,12 @@ Themed Card Attributes:
 ---- LIMITED AMOUNT CARDS WILL HAVE A UNIQUE HASH GIVEN TO THEM
 - Inherits theme ONLY FROM THE PACK THEY WERE BOUGHT FROM (No sparkly cards in wooden packs)
 ---- DOES NOT APPLY TO BASIC, BASIC CARDS ARE IN EVERY PACK
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Functions of each part of the game.
+
+Card: It's a card. It's the main value of the game. That's about it.
+
+Pack: Buy a pack and open it, obtaining x amount of cards, with chances to get different rarity-levels of cards. Themed packs can have an arbitrary max of themed cards.
+
+Theme: Limited time design to a card, wether it be time-limited or amount-limited. Theme cards will almost always be more rare than basic cards.
