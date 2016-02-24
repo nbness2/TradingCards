@@ -1,6 +1,4 @@
-import numpy
-import urllib
-rand = numpy.random
+import numpy.random as rand
 
 def buyPack(packname):
     for x in packs[packname].openPack():
