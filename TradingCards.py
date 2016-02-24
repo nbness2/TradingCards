@@ -1,8 +1,6 @@
 import numpy.random as rand
-
-def buyPack(packname):
-    for x in packs[packname].openPack():
-        print(x.cardTier, x.cardName)
+from os.path import isdir, exists
+from os import makedirs as makedir
 
 class Card:
     '''
@@ -14,9 +12,11 @@ class Card:
     '''
 
     def __init__(self, cardName, cardTier, cardTheme):
+        self.dprint()
         self.cardName = cardName
         self.cardTier = cardTier
         self.cardTheme = cardTheme.themeName
+
 
 class Pack:
     '''
@@ -57,10 +57,14 @@ class Theme:
     ~(should be same length as themeTiers)
     '''
     def __init__(self, themeName, themeCardNames, themeTiers, themeTierChances):
-        self.themeCardNames = themeCardNames
+        self.themeCardNames = self.getCardNames()
         self.themeName = themeName
         self.themeTiers = themeTiers
         self.themeTierChances = themeTierChances
+
+    def getCardNames(self):
+        with open('names/{0}.txt'.format(self._themeName), 'r') as cardNames:
+            return cardNames.readlines()
 
     def pickTier(self):
         tier = rand.choice(self.themeTiers, 1, p=self.themeTierChances)[0]
@@ -75,6 +79,13 @@ class Theme:
 
     def __bool__(self):
         return True
+
+def buyPack(packname):
+    for x in packs[packname].openPack():
+        print(x.cardTier, x.cardName)
+
+def editTheme():
+    pass
 
 with open('names.txt', 'r') as nameFile:
     cardnames = tuple([x[:-1] for x in nameFile.readlines()])
