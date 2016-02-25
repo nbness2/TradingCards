@@ -56,9 +56,7 @@ class Theme:
     themeTierChances = tuple (chances for the corresponding theme tier)
     ~(should be same length as themeTiers)
     '''
-    def __init__(self, themeName, themeCardNames, themeTiers, themeTierChances):
-        #self.themeCardNames = self.getCardNames()
-        self.themeCardNames = themeCardNames
+    def __init__(self, themeName):#themeCardNames, themeTiers, themeTierChances):
         self.themeName = themeName
         self.themeTiers = themeTiers
         self.themeTierChances = themeTierChances
