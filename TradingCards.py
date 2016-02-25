@@ -99,8 +99,67 @@ def inpConf(inpstr):
             print('Invalid input: {0} . Please try again'.format(reply))
 
 def editTheme():
-    pass
+    response = ' '
+    cardNames = []
+    tierNames = []
+    cardName = ''
+    tierName = ''
+    tierChances = []
+    tierChance = 0
+    breakLoop = False
+    usedChance = 0
+    while response not in 'en':
+        response = input('Create (N)ew theme or (E)dit an existing one: ')[0]
+    if response == 'n':
+        themeName = inpConf('Input theme name: ')
+        while not breakLoop:
+            cardName = inpConf('Input card name (-- to exit): ')
+            if cardName == '--':
+                breakLoop = True
+            else:
+                cardNames.append(cardName)
+        breakLoop = False
+        while not breakLoop:
+            tierName = inpConf('Input Tier name: ')
+            if tierName == '--':
+                breakLoop = True
+            else:
+                tierNames.append(tierName)
+                print(tierName, tierNames)         
+        breakLoop = False
+        while not breakLoop:
+            tierChances = []
+            for x in tierNames:
+                print(x)
+                try:
+                    tierChance = int(inpConf('Rarity for tier: {0} . {1} remaining chance.'.format(x, 100-usedChance*100)))/100
+                    usedChance += tierChance
+                    tierChances.append(tierChance)
+                    if usedChance > 1:
+                        print('Cannot use over 100 chance!')
+                        break
+                except:
+                    print('Invalid value: {0}'.format(x))
+                    break
             if len(tierNames) == len(tierChances):
+                breakLoop = True
+        fileDir = 'themes/'+themeName+'/'
+        if not exists(fileDir):
+            makedir(fileDir)
+        with open(fileDir+'cnames.txt', 'w') as cNameFile:
+            for cName in cardNames:
+                cNameFile.write(cName+'\n')
+        with open(fileDir+'tnames.txt', 'w') as tNameFile:
+            for tName in tierNames:
+                tNameFile.write(tName+'\n')
+        with open(fileDir+'cchances.txt', 'w') as tChanceFile:
+            for tChance in tierChances:
+                tChanceFile.write(str(tChance)+'\n')
+
+    elif response == 'e':
+        pass
+    else:
+        raise ValueError('Invalid response: (0)'.format(response))
 
 with open('names.txt', 'r') as nameFile:
     cardnames = tuple([x[:-1] for x in nameFile.readlines()])
