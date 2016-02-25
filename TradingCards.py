@@ -171,14 +171,10 @@ def editTheme():
     else:
         raise ValueError('Invalid response: (0)'.format(response))
 
-with open('names.txt', 'r') as nameFile:
-    cardnames = tuple([x[:-1] for x in nameFile.readlines()])
+themes = {}
 
-themes = {'theme_basic' : Theme('Basic', cardnames, ('Black', 'Green', 'Yellow', 'Blue', 'Purple', 'Red', 'White'), (.55, .15, .12, .08, .05, .03, .02)),
-          'theme_ducky' : Theme('Ducky', ('Bill', 'George', 'Deborah', 'Sneaker', 'Oppenheimer', 'Jill', 'Squilliam'), ('Quacky', 'Quackier', 'Quackiest'), (.75,.20,.05))}
-
-packs = {'Beginner Pack':Pack(250, 7, basicCardChances = (.65, .15, .10, .05, .04, .01, 0)),
+'''packs = {'Beginner Pack':Pack(250, 7, basicCardChances = (.65, .15, .10, .05, .04, .01, 0)),
          'Intermediate Pack':Pack(500, 7, basicCardChances = (.65, .13, .12, .05, .035, .01, .005)),
          'Expert Pack':Pack(1000, 7, basicCardChances = (.60, .15, .10, .07, .04, .03, .01)),
          'Quacker Packer':Pack(1000, 7, basicCardChances = (.60, .15, .10, .07, .04, .03, .01), packTheme = 'theme_ducky', themeCardChance = .05)
-        }
+        }'''
