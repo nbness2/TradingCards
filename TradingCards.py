@@ -22,8 +22,8 @@ class Pack:
     '''
     Base class for all packs
     These are values that are assumed to be correct to work correctly
-    packPrice = int (0->inf)
-    cardsInPack = int (1->inf)
+    packPrice = int (0->X)
+    cardsInPack = int (1->X)
     cardTierChances = None/tuple (lowest rarity -> highest rarity)(add up to 1)
     ~corresponds to the basic theme, set to 0 for no chance of that tier
     themeCardChance = None/int (0->1)
@@ -57,14 +57,16 @@ class Theme:
     ~(should be same length as themeTiers)
     '''
     def __init__(self, themeName, themeCardNames, themeTiers, themeTierChances):
-        self.themeCardNames = self.getCardNames()
+        #self.themeCardNames = self.getCardNames()
+        self.themeCardNames = themeCardNames
         self.themeName = themeName
         self.themeTiers = themeTiers
         self.themeTierChances = themeTierChances
 
-    def getCardNames(self):
-        with open('names/{0}.txt'.format(self._themeName), 'r') as cardNames:
+    '''def getCardNames(self):
+        with open('names/{0}.txt'.format(self.themeName), 'r') as cardNames:
             return cardNames.readlines()
+    '''
 
     def pickTier(self):
         tier = rand.choice(self.themeTiers, 1, p=self.themeTierChances)[0]
@@ -84,8 +86,21 @@ def buyPack(packname):
     for x in packs[packname].openPack():
         print(x.cardTier, x.cardName)
 
+def inpConf(inpstr):
+    conf = False
+    while not conf:
+        reply = input(inpstr)
+        confinp= input('Confirm "{0}" Y/N: '.format(reply))[0].lower()
+        if confinp == 'n':
+            conf = False
+        elif confinp == 'y':
+            return str(reply)
+        else:
+            print('Invalid input: {0} . Please try again'.format(reply))
+
 def editTheme():
     pass
+            if len(tierNames) == len(tierChances):
 
 with open('names.txt', 'r') as nameFile:
     cardnames = tuple([x[:-1] for x in nameFile.readlines()])
