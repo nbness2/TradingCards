@@ -58,13 +58,27 @@ class Theme:
     '''
     def __init__(self, themeName):#themeCardNames, themeTiers, themeTierChances):
         self.themeName = themeName
-        self.themeTiers = themeTiers
-        self.themeTierChances = themeTierChances
+        #self.themeCardNames = themeCardNames
+        #self.themeTiers = themeTiers
+        #self.themeTierChances = themeTierChances
+        self.themeCardNames = tuple(self.readCardNames())
+        self.themeTiers = tuple(self.readTierNames())
+        self.themeTierChances = tuple(self.readTierChances())
 
-    '''def getCardNames(self):
-        with open('names/{0}.txt'.format(self.themeName), 'r') as cardNames:
-            return cardNames.readlines()
-    '''
+    def readCardNames(self):
+        with open('themes/{0}/cnames.txt'.format(self.themeName), 'r') as cardNames:
+            cardNameList = [x[:-1] for x in cardNames.readlines()]
+            return cardNameList
+
+    def readTierNames(self):
+        with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
+            tierNameList = [x[:-1] for x in tierNames.readlines()]
+            return tierNameList
+
+    def readTierChances(self):
+        with open('themes/{0}/tchances.txt'.format(self.themeName), 'r') as tierChances:
+            tierChanceList = [float(x[:-1]) for x in tierChances.readlines()]
+            return tierChanceList
 
     def pickTier(self):
         tier = rand.choice(self.themeTiers, 1, p=self.themeTierChances)[0]
