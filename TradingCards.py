@@ -163,7 +163,7 @@ def editTheme():
         with open(fileDir+'tnames.txt', 'w') as tNameFile:
             for tName in tierNames:
                 tNameFile.write(tName+'\n')
-        with open(fileDir+'cchances.txt', 'w') as tChanceFile:
+        with open(fileDir+'tchances.txt', 'w') as tChanceFile:
             for tChance in tierChances:
                 tChanceFile.write(str(tChance)+'\n')
     elif response == 'e':
