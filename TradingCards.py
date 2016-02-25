@@ -16,37 +16,6 @@ class Card:
         self.cardTier = cardTier
         self.cardTheme = cardTheme
 
-
-class Pack:
-    '''
-    Base class for all packs
-    These are values that are assumed to be correct to work correctly
-    packPrice = int (0->X)
-    cardsInPack = int (1->X)
-    cardTierChances = None/tuple (lowest rarity -> highest rarity)(add up to 1)
-    ~corresponds to the basic theme, set to 0 for no chance of that tier
-    themeCardChance = None/int (0->1)
-    packTheme = None/Theme (this is an extra theme in addition to the default basic theme)
-    '''
-    def __init__(self, packPrice, cardsInPack, basicCardChances = None, packTheme = None, themeCardChance = None, maxThemed = 1):
-        self.price = packPrice
-        self.cardsInPack = cardsInPack
-        self.basicChances = basicCardChances if basicCardChances else themes['theme_basic'].themeTierChances
-        self.themeChance = themeCardChance if (packTheme and themeCardChance) else 0 # This chance is PER CARD
-        self.packTheme = themes[packTheme if packTheme else 'theme_basic']
-        self.maxThemed = maxThemed
-
-    def openPack(self):
-        themect = 0
-        cardlist = []
-        for x in range(self.cardsInPack):
-            if rand.random() <= self.themeChance and themect <= self.maxThemed:
-                cardlist.append(self.packTheme.makeCard())
-                themect += 1
-            else:
-                cardlist.append(themes['theme_basic'].makeCard())
-        return cardlist
-
 class Theme:
     '''
     themeName = str
@@ -55,11 +24,8 @@ class Theme:
     themeTierChances = tuple (chances for the corresponding theme tier)
     ~(should be same length as themeTiers)
     '''
-    def __init__(self, themeName):#themeCardNames, themeTiers, themeTierChances):
+    def __init__(self, themeName):
         self.themeName = themeName
-        #self.themeCardNames = themeCardNames
-        #self.themeTiers = themeTiers
-        #self.themeTierChances = themeTierChances
         self.themeCardNames = tuple(self.readCardNames())
         self.themeTiers = tuple(self.readTierNames())
         self.themeTierChances = tuple(self.readTierChances())
@@ -92,6 +58,36 @@ class Theme:
 
     def __bool__(self):
         return True
+
+class Pack:
+    '''
+    Base class for all packs
+    These are values that are assumed to be correct to work correctly
+    packPrice = int (0->X)
+    cardsInPack = int (1->X)
+    cardTierChances = None/tuple (lowest rarity -> highest rarity)(add up to 1)
+    ~corresponds to the basic theme, set to 0 for no chance of that tier
+    themeCardChance = None/int (0->1)
+    packTheme = None/Theme (this is an extra theme in addition to the default basic theme)
+    '''
+    def __init__(self, packPrice, cardsInPack, basicCardChances = None, packTheme = None, themeCardChance = None, maxThemed = 1):
+        self.price = packPrice
+        self.cardsInPack = cardsInPack
+        self.basicChances = basicCardChances if basicCardChances else themes['theme_basic'].themeTierChances
+        self.themeChance = themeCardChance if (packTheme and themeCardChance) else 0 # This chance is PER CARD
+        self.packTheme = themes[packTheme if packTheme else 'theme_basic']
+        self.maxThemed = maxThemed
+
+    def openPack(self):
+        themect = 0
+        cardlist = []
+        for x in range(self.cardsInPack):
+            if rand.random() <= self.themeChance and themect <= self.maxThemed:
+                cardlist.append(self.packTheme.makeCard())
+                themect += 1
+            else:
+                cardlist.append(themes['theme_basic'].makeCard())
+        return cardlist
 
 def buyPack(packname):
     for x in packs[packname].openPack():
@@ -128,19 +124,17 @@ def createTheme():
             cardNames.append(cardName)
     breakLoop = False
     while not breakLoop:
-        tierName = inpConf('Input Tier name: ')
+        tierName = inpConf('Input Tier name (-- to exit): ')
         if tierName == '--':
             breakLoop = True
         else:
-            tierNames.append(tierName)
-            print(tierName, tierNames)         
+            tierNames.append(tierName)       
     breakLoop = False
     while not breakLoop:
         tierChances = []
         for x in tierNames:
-            print(x)
             try:
-                tierChance = int(inpConf('Rarity for tier: {0} . {1} remaining chance.'.format(x, 100-usedChance*100)))/100
+                tierChance = int(inpConf('Rarity for tier: {0} . {1:.3f} remaining chance. '.format(x, 100-usedChance*100)))/100
                 usedChance += tierChance
                 tierChances.append(tierChance)
                 if usedChance > 1:
@@ -164,6 +158,9 @@ def createTheme():
         for tChance in tierChances:
             tChanceFile.write(str(tChance)+'\n')
 def editTheme():
+    pass
+
+def createPack():
     pass
 
 themes = {}
