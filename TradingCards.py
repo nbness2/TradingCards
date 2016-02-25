@@ -166,7 +166,6 @@ def editTheme():
         with open(fileDir+'cchances.txt', 'w') as tChanceFile:
             for tChance in tierChances:
                 tChanceFile.write(str(tChance)+'\n')
-
     elif response == 'e':
         pass
     else:
