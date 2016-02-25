@@ -15,7 +15,7 @@ class Card:
         self.dprint()
         self.cardName = cardName
         self.cardTier = cardTier
-        self.cardTheme = cardTheme.themeName
+        self.cardTheme = cardTheme
 
 
 class Pack:
