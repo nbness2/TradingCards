@@ -243,8 +243,14 @@ def createPack():
             else:
                 pConfigFile.write(str(config))
 
-'''packs = {'Beginner Pack':Pack(250, 7, basicCardChances = (.65, .15, .10, .05, .04, .01, 0)),
-         'Intermediate Pack':Pack(500, 7, basicCardChances = (.65, .13, .12, .05, .035, .01, .005)),
-         'Expert Pack':Pack(1000, 7, basicCardChances = (.60, .15, .10, .07, .04, .03, .01)),
-         'Quacker Packer':Pack(1000, 7, basicCardChances = (.60, .15, .10, .07, .04, .03, .01), packTheme = 'theme_ducky', themeCardChance = .05)
-        }'''
+def readThemes():
+    themes = {themeName : Theme(themeName) for themeName in listdir('themes')}
+    return themes
+
+def readPacks():
+    packs = {packName : Pack(packName) for packName in listdir('packs')}
+    return packs
+
+themes = readThemes()
+
+packs = readPacks()
