@@ -89,6 +89,11 @@ class Pack:
                 cardlist.append(themes['theme_basic'].makeCard())
         return cardlist
 
+    def getConfigs(self):
+        #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
+        with open('packs/{0}/pconfigs', 'w') as meow:
+            pass
+
 def buyPack(packname):
     for x in packs[packname].openPack():
         print(x.cardTier, x.cardName)
@@ -173,11 +178,11 @@ def editTheme():
 
 def createPack():
     baseTheme = 'Basic'
-    baseThemeTiers = Theme(baseTheme).themeTiers()
+    baseThemeTiers = Theme(baseTheme).themeTiers
     baseThemeChances = []
     themeCardChance = 0
     maxThemeCards = 0
-    usecChance = 0
+    usedChance = 0
     packCardAmt = 0
     packPrice = 0
     breakLoop = False
@@ -193,7 +198,7 @@ def createPack():
             if usedChance > 1:
                 print('Cannot use over 100 chance!')
                 break
-        if len(baseThemeTiers) == len(tierChances):
+        if len(baseThemeTiers) == len(baseThemeChances):
             breakLoop = True
     extraTheme = inpConf('Name of extra theme (-- for none): ')
     if extraTheme == '--':
@@ -213,13 +218,13 @@ def createPack():
                 basicChanceFile.write(str(bChance)+'\n')
             else:
                 basicChanceFile.write(str(bChance))
-    with open(fileDir+'pconfigs.txt') as pConfigFile:
+    with open(fileDir+'pconfigs.txt', 'w') as pConfigFile:
         pconfigs = [packPrice, packCardAmt, themeCardChance, maxThemeCards]
-        for idx, config in pconfigs:
+        for idx, config in enumerate(pconfigs):
             if len(pconfigs)-1 != idx:
-                pConfigFile.write(str(pconfig)+'\n')
+                pConfigFile.write(str(config)+'\n')
             else:
-                pConfigFile.write(str(pconfig))
+                pConfigFile.write(str(config))
 themes = {}
 
 '''packs = {'Beginner Pack':Pack(250, 7, basicCardChances = (.65, .15, .10, .05, .04, .01, 0)),
