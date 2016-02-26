@@ -1,5 +1,5 @@
 import numpy.random as rand
-from os.path import isdir, exists
+from os.path import exists
 from os import makedirs as makedir
 
 class Card:
