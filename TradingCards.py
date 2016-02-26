@@ -132,9 +132,9 @@ def createTheme():
     breakLoop = False
     while not breakLoop:
         tierChances = []
-        for x in tierNames:
+        for tierName in tierNames:
             try:
-                tierChance = int(inpConf('Rarity for tier: {0} . {1:.3f} remaining chance. '.format(x, 100-usedChance*100)))/100
+                tierChance = int(inpConf('Rarity for tier: {0} . {1:.3f} remaining chance. '.format(tierName, 100-usedChance*100)))/100
                 usedChance += tierChance
                 tierChances.append(tierChance)
                 if usedChance > 1:
