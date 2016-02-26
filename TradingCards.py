@@ -106,7 +106,6 @@ def inpConf(inpstr):
             print('Invalid input: {0} . Please try again'.format(reply))
 
 def createTheme():
-    response = ' '
     cardNames = []
     tierNames = []
     cardName = ''
@@ -115,7 +114,8 @@ def createTheme():
     tierChance = 0
     breakLoop = False
     usedChance = 0
-    themeName = inpConf('Input theme name: ')
+    themeName = inpConf('Input Theme name: ')
+    fileDir = 'themes/'+themeName+'/'
     while not breakLoop:
         cardName = inpConf('Input card name (-- to exit): ')
         if cardName == '--':
@@ -145,7 +145,6 @@ def createTheme():
                 break
         if len(tierNames) == len(tierChances):
             breakLoop = True
-    fileDir = 'themes/'+themeName+'/'
     if not exists(fileDir):
         makedir(fileDir)
     with open(fileDir+'cnames.txt', 'w') as cNameFile:
@@ -173,8 +172,54 @@ def editTheme():
     pass
 
 def createPack():
-    pass
+    baseTheme = 'Basic'
+    baseThemeTiers = Theme(baseTheme).themeTiers()
+    baseThemeChances = []
+    themeCardChance = 0
+    maxThemeCards = 0
+    usecChance = 0
+    packCardAmt = 0
+    packPrice = 0
+    breakLoop = False
+    packName = inpConf('Input Pack name: ')
+    packPrice = int(inpConf('Input Pack price: '))
+    packCardAmt = int(inpConf('Input amout of cards in this Pack: '))
+    fileDir = 'packs/'+packName+'/'
+    while not breakLoop:
+        for tierName in baseThemeTiers:
+            tierChance = int(inpConf('Rarity for {0} tier: {1} . {2:.2f} remaining chance. '.format(baseTheme, tierName, 100-usedChance*100)))/100
+            usedChance += tierChance
+            baseThemeChances.append(tierChance)
+            if usedChance > 1:
+                print('Cannot use over 100 chance!')
+                break
+        if len(baseThemeTiers) == len(tierChances):
+            breakLoop = True
+    extraTheme = inpConf('Name of extra theme (-- for none): ')
+    if extraTheme == '--':
+        extraTheme == None
+    else:
+        themeCardChance = int(inpConf('Input theme card chance: '))/100
+        maxThemeCards = int(inpConf('Input max theme cards per pack: '))
 
+    if not exists(fileDir):
+        makedir(fileDir)
+    with open(fileDir+'themes.txt', 'w') as themeNames:
+        themeNames.write(baseTheme+'\n')
+        themeNames.write(extraTheme)
+    with open(fileDir+'basicChances.txt', 'w') as basicChanceFile:
+        for idx, bChance in enumerate(baseThemeChances):
+            if len(baseThemeChances)-1 != idx:
+                basicChanceFile.write(str(bChance)+'\n')
+            else:
+                basicChanceFile.write(str(bChance))
+    with open(fileDir+'pconfigs.txt') as pConfigFile:
+        pconfigs = [packPrice, packCardAmt, themeCardChance, maxThemeCards]
+        for idx, config in pconfigs:
+            if len(pconfigs)-1 != idx:
+                pConfigFile.write(str(pconfig)+'\n')
+            else:
+                pConfigFile.write(str(pconfig))
 themes = {}
 
 '''packs = {'Beginner Pack':Pack(250, 7, basicCardChances = (.65, .15, .10, .05, .04, .01, 0)),
