@@ -1,6 +1,6 @@
 import numpy.random as rand
 from os.path import exists
-from os import makedirs as makedir
+from os import makedirs, listdir
 
 class Card:
     '''
@@ -33,17 +33,17 @@ class Theme:
     def readCardNames(self):
         with open('themes/{0}/cnames.txt'.format(self.themeName), 'r') as cardNames:
             cardNameList = [x[:-1] for x in cardNames.readlines()]
-            return tuple(cardNameList)
+        return tuple(cardNameList)
 
     def readTierNames(self):
         with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
             tierNameList = [x[:-1] for x in tierNames.readlines()]
-            return tuple(tierNameList)
+        return tuple(tierNameList)
 
     def readTierChances(self):
         with open('themes/{0}/tchances.txt'.format(self.themeName), 'r') as tierChances:
             tierChanceList = [float(x[:-1]) for x in tierChances.readlines()]
-            return tuple(tierChanceList)
+        return tuple(tierChanceList)
 
     def pickTier(self):
         tier = rand.choice(self.themeTiers, 1, p=self.themeTierChances)[0]
@@ -94,9 +94,6 @@ class Pack:
         with open('packs/{0}/pconfigs', 'w') as meow:
             pass
 
-def buyPack(packname):
-    for x in packs[packname].openPack():
-        print(x.cardTier, x.cardName)
 
 def inpConf(inpstr):
     conf = False
@@ -151,7 +148,7 @@ def createTheme():
         if len(tierNames) == len(tierChances):
             breakLoop = True
     if not exists(fileDir):
-        makedir(fileDir)
+        makedirs(fileDir)
     with open(fileDir+'cnames.txt', 'w') as cNameFile:
         for idx, cName in enumerate(cardNames):
             if len(cardNames)-1 != idx:
@@ -208,7 +205,7 @@ def createPack():
         maxThemeCards = int(inpConf('Input max theme cards per pack: '))
 
     if not exists(fileDir):
-        makedir(fileDir)
+        makedirs(fileDir)
     with open(fileDir+'themes.txt', 'w') as themeNames:
         themeNames.write(baseTheme+'\n')
         themeNames.write(extraTheme)
@@ -225,7 +222,6 @@ def createPack():
                 pConfigFile.write(str(config)+'\n')
             else:
                 pConfigFile.write(str(config))
-themes = {}
 
 '''packs = {'Beginner Pack':Pack(250, 7, basicCardChances = (.65, .15, .10, .05, .04, .01, 0)),
          'Intermediate Pack':Pack(500, 7, basicCardChances = (.65, .13, .12, .05, .035, .01, .005)),
