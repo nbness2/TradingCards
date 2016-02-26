@@ -77,20 +77,42 @@ class Pack:
         self.basicTheme, self.extraTheme = self.readThemes()
 
     def openPack(self):
-        themect = 0
-        cardlist = []
-        for x in range(self.cardsInPack):
-            if rand.random() <= self.themeChance and themect <= self.maxThemed:
-                cardlist.append(self.packTheme.makeCard())
-                themect += 1
+        cardList = []
+        themeCt = 0
+        for x in range(self.cardAmt):
+            if rand.random() <= self.themeCardChance and themeCt < self.maxThemed:
+                cardList.append(Theme(self.extraTheme).makeCard())
+                themeCt += 1
             else:
-                cardlist.append(themes['theme_basic'].makeCard())
-        return cardlist
+                cardList.append(Theme(self.basicTheme).makeCard())
+        return tuple(cardList)
 
-    def getConfigs(self):
+    def readConfigs(self):
         #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
-        with open('packs/{0}/pconfigs', 'w') as meow:
-            pass
+        configs = []
+        with open('packs/{0}/pconfigs.txt'.format(self.packName), 'r') as configFile:
+            for config in configFile.readlines():
+                try:
+                    configs.append(float(config[:-1]))
+                except ValueError:
+                    configs.append(float(config))
+        return configs
+
+    def readBasicChances(self):
+        bclist = []
+        with open('packs/{0}/basicChances.txt'.format(self.packName), 'r') as bcFile:
+            for bc in bcFile.readlines():
+                try:
+                    bclist.append(float(bc[:-1]))
+                except ValueError:
+                    bclist.append(float(bc))
+                    
+        return tuple(bclist)
+
+    def readThemes(self):
+        with open('packs/{0}/themes.txt'.format(self.packName), 'r') as themeFile:
+            themeList = [theme[:-1] for theme in themeFile.readlines()]
+        return tuple(themeList)
 
 
 def inpConf(inpstr):
