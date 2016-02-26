@@ -70,13 +70,11 @@ class Pack:
     themeCardChance = None/int (0->1)
     packTheme = None/Theme (this is an extra theme in addition to the default basic theme)
     '''
-    def __init__(self, packPrice, cardsInPack, basicCardChances = None, packTheme = None, themeCardChance = None, maxThemed = 1):
-        self.price = packPrice
-        self.cardsInPack = cardsInPack
-        self.basicChances = basicCardChances if basicCardChances else themes['theme_basic'].themeTierChances
-        self.themeChance = themeCardChance if (packTheme and themeCardChance) else 0 # This chance is PER CARD
-        self.packTheme = themes[packTheme if packTheme else 'theme_basic']
-        self.maxThemed = maxThemed
+    def __init__(self, packName):
+        self.packName = packName
+        self.packPrice, self.cardAmt, self.themeCardChance, self.maxThemed = self.readConfigs()
+        self.basicChances = self.readBasicChances()
+        self.basicTheme, self.extraTheme = self.readThemes()
 
     def openPack(self):
         themect = 0
