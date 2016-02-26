@@ -26,24 +26,24 @@ class Theme:
     '''
     def __init__(self, themeName):
         self.themeName = themeName
-        self.themeCardNames = tuple(self.readCardNames())
-        self.themeTiers = tuple(self.readTierNames())
-        self.themeTierChances = tuple(self.readTierChances())
+        self.themeCardNames = self.readCardNames()
+        self.themeTiers = self.readTierNames()
+        self.themeTierChances = self.readTierChances()
 
     def readCardNames(self):
         with open('themes/{0}/cnames.txt'.format(self.themeName), 'r') as cardNames:
             cardNameList = [x[:-1] for x in cardNames.readlines()]
-            return cardNameList
+            return tuple(cardNameList)
 
     def readTierNames(self):
         with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
             tierNameList = [x[:-1] for x in tierNames.readlines()]
-            return tierNameList
+            return tuple(tierNameList)
 
     def readTierChances(self):
         with open('themes/{0}/tchances.txt'.format(self.themeName), 'r') as tierChances:
             tierChanceList = [float(x[:-1]) for x in tierChances.readlines()]
-            return tierChanceList
+            return tuple(tierChanceList)
 
     def pickTier(self):
         tier = rand.choice(self.themeTiers, 1, p=self.themeTierChances)[0]
