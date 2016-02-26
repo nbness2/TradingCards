@@ -156,7 +156,7 @@ def createTheme():
         tierChances = []
         for tierName in tierNames:
             try:
-                tierChance = int(inpConf('Rarity for tier: {0} . {1:.3f} remaining chance. '.format(tierName, 100-usedChance*100)))/100
+                tierChance = float(inpConf('Rarity for tier: {0} . {1:.3f} remaining chance. '.format(tierName, 100-usedChance*100)))/100
                 usedChance += tierChance
                 tierChances.append(tierChance)
                 if usedChance > 1:
@@ -209,7 +209,7 @@ def createPack():
     fileDir = 'packs/'+packName+'/'
     while not breakLoop:
         for tierName in baseThemeTiers:
-            tierChance = int(inpConf('Rarity for {0} tier: {1} . {2:.2f} remaining chance. '.format(baseTheme, tierName, 100-usedChance*100)))/100
+            tierChance = float(inpConf('Rarity for {0} tier: {1} . {2:.2f} remaining chance. '.format(baseTheme, tierName, 100-usedChance*100)))/100
             usedChance += tierChance
             baseThemeChances.append(tierChance)
             if usedChance > 1:
