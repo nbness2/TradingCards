@@ -6,8 +6,8 @@ How to make a theme and make it work with the current implement?
 2nc. editTheme asks for new name of copy
 3nc. editTheme copies copied theme files to new theme files
 2n. editTheme asks for theme name
-3n. editTheme asks for every card name (-- for end)
-4n. editTheme asks for every tier name (-- for end)
+3n. editTheme asks for every card name (-- for end) 
+4n. editTheme asks for every tier name (-- for end) 
 4n. editTheme asks for chance percentages for each tier (Starts at 100*, each percentage given lowers the inital value, when initial value reaches 0 AT THE END OF THE LIST, terminates loop)
 
 1e. editTheme asks for name of theme to be edited
