@@ -91,11 +91,12 @@ class Pack:
         #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
         configs = []
         with open('packs/{0}/pconfigs.txt'.format(self.packName), 'r') as configFile:
-            for config in configFile.readlines():
+            for line in configFile:
+                line = line.strip()
                 try:
-                    configs.append(float(config[:-1]))
+                    configs.append(int(line))
                 except ValueError:
-                    configs.append(float(config))
+                    configs.append(float(line))
         return configs
 
     def readBasicChances(self):
@@ -111,7 +112,7 @@ class Pack:
 
     def readThemes(self):
         with open('packs/{0}/themes.txt'.format(self.packName), 'r') as themeFile:
-            themeList = [theme[:-1] for theme in themeFile.readlines()]
+            themeList = [theme.strip() for theme in themeFile]
         return tuple(themeList)
 
 
