@@ -192,7 +192,8 @@ def createTheme():
                 tChanceFile.write(str(tChance))
 
 def editTheme():
-    pass
+    themeList = listdir('themes')
+    editThemeName = inpConf('{0}\nInput the name of the theme you are editing: '.format(themeList))c cv
 
 def createPack():
     baseTheme = 'Basic'
