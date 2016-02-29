@@ -112,7 +112,7 @@ class Pack:
 
     def readThemes(self):
         with open('packs/{0}/themes.txt'.format(self.packName), 'r') as themeFile:
-            themeList = [theme[:-1] for theme in themeFile.readlines()]
+            themeList = [theme.strip() for theme in themeFile]
         return tuple(themeList)
 
 
