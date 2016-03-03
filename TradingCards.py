@@ -168,21 +168,18 @@ def createTheme():
         makedirs(fileDir)
     with open(fileDir+'cnames.txt', 'w') as cNameFile:
         for idx, cName in enumerate(cardNames):
-            if len(cardNames)-1 != idx:
-                cNameFile.write(cName+'\n')
+            if idx < len(cardNames)-1:
+                cNameFile.write(str(cName)+'\n')
             else:
-                cNameFile.write(cName)
-
     with open(fileDir+'tnames.txt', 'w') as tNameFile:
         for idx, tName in enumerate(tierNames):
-            if len(tierNames)-1 != idx:
-                tNameFile.write(tName+'\n')
+            if idx < len(tierNames)-1:
+                tNameFile.write(str(tName)+'\n')
             else:
-                tNameFile.write(tName)
-
+                tNameFile.write(str(tName))
     with open(fileDir+'tchances.txt', 'w') as tChanceFile:
         for idx, tChance in enumerate(tierChances):
-            if len(tierChances)-1 != idx:
+            if idx < len(tierChances)-1:
                 tChanceFile.write(str(tChance)+'\n')
             else:
                 tChanceFile.write(str(tChance))
