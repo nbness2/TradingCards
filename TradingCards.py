@@ -171,6 +171,7 @@ def createTheme():
             if idx < len(cardNames)-1:
                 cNameFile.write(str(cName)+'\n')
             else:
+                cNameFile.write(str(cName))
     with open(fileDir+'tnames.txt', 'w') as tNameFile:
         for idx, tName in enumerate(tierNames):
             if idx < len(tierNames)-1:
@@ -183,8 +184,10 @@ def createTheme():
                 tChanceFile.write(str(tChance)+'\n')
             else:
                 tChanceFile.write(str(tChance))
+            
 
 def editTheme():
+    isTheme = False
     themeList = listdir('themes')
     editThemeName = inpConf('{0}\nInput the name of the theme you are editing: '.format(themeList))c cv
 
