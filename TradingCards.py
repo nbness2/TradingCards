@@ -32,17 +32,17 @@ class Theme:
 
     def readCardNames(self):
         with open('themes/{0}/cnames.txt'.format(self.themeName), 'r') as cardNames:
-            cardNameList = [x[:-1] for x in cardNames.readlines()]
+            cardNameList = [x.strip() for x in cardNames.readlines()]
         return tuple(cardNameList)
 
     def readTierNames(self):
         with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
-            tierNameList = [x[:-1] for x in tierNames.readlines()]
+            tierNameList = [x.strip() for x in tierNames.readlines()]
         return tuple(tierNameList)
 
     def readTierChances(self):
         with open('themes/{0}/tchances.txt'.format(self.themeName), 'r') as tierChances:
-            tierChanceList = [float(x[:-1]) for x in tierChances.readlines()]
+            tierChanceList = [float(x) for x in tierChances.readlines()]
         return tuple(tierChanceList)
 
     def pickTier(self):
@@ -91,23 +91,19 @@ class Pack:
         #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
         configs = []
         with open('packs/{0}/pconfigs.txt'.format(self.packName), 'r') as configFile:
-            for line in configFile:
-                line = line.strip()
+            for config in configFile:
+                config = config.strip()
                 try:
-                    configs.append(int(line))
+                    configs.append(int(config))
                 except ValueError:
-                    configs.append(float(line))
+                    configs.append(float(config))
         return configs
 
     def readBasicChances(self):
         bclist = []
         with open('packs/{0}/basicChances.txt'.format(self.packName), 'r') as bcFile:
             for bc in bcFile.readlines():
-                try:
-                    bclist.append(float(bc[:-1]))
-                except ValueError:
-                    bclist.append(float(bc))
-                    
+                bclist.append(float(bc.strip()))
         return tuple(bclist)
 
     def readThemes(self):
