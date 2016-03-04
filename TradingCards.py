@@ -312,6 +312,35 @@ def randInt(maxInt):
     seedTime =  time.clock() - (seedTimeMod*1*time.clock())
     
     return range(maxInt)[(seed^seedOffset)%maxInt]
+
+def weightedChoice(inputList, weightList, maxPrecision = 3):
+
+    global seedTime
+
+    seed = int(seedTime * 1000000000.1+.1+.1)
+    
+    if not len(inputList) == len(weightList):
+        raise ValueError('The length of input list ({0}) and weight list ({1}) must be equal'.format(len(inputList),
+                                                                                                     len(weightList)))
+    if not round(sum(weightList), 3) == 1:
+        raise ValueError('The sum of all weights ({0}) must equal 1'.format(sum(weightList)))
+
+    popList = []
+    
+    for inp, weight in zip(inputList, weightList):
+        for i in range(int(weight*(10**maxPrecision))):
+            popList.append(inp)
+
+    seedOffset = int(time.clock()*1000000000-time.clock()+.1+.1+.1)
+
+    seedTime =  time.clock() - (seedTimeMod*1*time.clock())
+
+    #return popList[randInt(len(popList))]
+    
+    return popList[~(seed^seedOffset)%len(popList)]
+
+    
+
 def readThemes():
     themes = {themeName : Theme(themeName) for themeName in listdir('themes')}
     return themes
@@ -331,3 +360,4 @@ testInputList = ['50%','30%','10%','5%','3%','1.5%','.5%']
 testWeightList = [.5,.3,.1,.05,.03,.015,.005]
 
 results = {x:0 for x in testInputList}
+results2 = {x:0 for x in testInputList}
