@@ -1,5 +1,4 @@
 import time
-from numpy import random as rand
 time.clock()
 from os.path import exists
 from os import makedirs, listdir
@@ -48,11 +47,11 @@ class Theme:
         return tuple(tierChanceList)
 
     def pickTier(self):
-        tier = rand.choice(self.themeTiers, 1, p=self.themeTierChances)[0]
+        tier = weightchoice(self.themeTiers, self.themeTierChances)
         return tier
 
     def pickName(self):
-        name = rand.choice(self.themeCardNames)
+        name = weightchoice(self.themeCardNames)
         return name
 
     def makeCard(self):
@@ -82,7 +81,7 @@ class Pack:
         cardList = []
         themeCt = 0
         for x in range(self.cardAmt):
-            if rand.random() <= self.themeCardChance and themeCt < self.maxThemed:
+            if randint(100) <= self.themeCardChance*100 and themeCt < self.maxThemed:
                 cardList.append(Theme(self.extraTheme).makeCard())
                 themeCt += 1
             else:
@@ -301,28 +300,32 @@ def createPack():
             else:
                 pConfigFile.write(str(config))
 
-def randInt(maxInt):
+def randint(maxInt):
 
     global seedTime
     
-    seed = int(seedTime * 1000000000-time.clock()+.1+.1+.1)
+    seed = int(seedTime * (2**30)-time.clock()+.1+.1+.1)
 
-    seedOffset = int(time.clock() * 1000000000-time.clock()+.1+.1+.1)
+    seedMask = int(time.clock() * (2**30)-time.clock()+.1+.1+.1)
 
     seedTime =  time.clock() - (seedTimeMod*1*time.clock())
     
-    return range(maxInt)[(seed^seedOffset)%maxInt]
+    return range(int(maxInt))[(seed^seedMask)%maxInt]
 
-def weightedChoice(inputList, weightList, maxPrecision = 3):
+def weightchoice(inputList, weightList = None, maxPrecision = 3):
 
     global seedTime
 
-    seed = int(seedTime * 1000000000.1+.1+.1)
+    seed = int(seedTime * (2**30)+.1+.1+.1)
+
+    if weightList == None:
+        weightList = [1/len(inputList) for x in inputList]
     
     if not len(inputList) == len(weightList):
         raise ValueError('The length of input list ({0}) and weight list ({1}) must be equal'.format(len(inputList),
                                                                                                      len(weightList)))
-    if not round(sum(weightList), 3) == 1:
+    if not round(sum(weightList), maxPrecision) == 1:
+        print(round(sum(weightList),maxPrecision))
         raise ValueError('The sum of all weights ({0}) must equal 1'.format(sum(weightList)))
 
     popList = []
@@ -331,7 +334,7 @@ def weightedChoice(inputList, weightList, maxPrecision = 3):
         for i in range(int(weight*(10**maxPrecision))):
             popList.append(inp)
 
-    seedOffset = int(time.clock()*1000000000-time.clock()+.1+.1+.1)
+    seedOffset = int(time.clock()*512-time.clock()+.1+.1+.1)
 
     seedTime =  time.clock() - (seedTimeMod*1*time.clock())
 
