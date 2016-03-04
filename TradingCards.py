@@ -358,9 +358,3 @@ packs = readPacks()
 
 seedTime = time.clock()
 seedTimeMod = time.clock()*16
-
-testInputList = ['50%','30%','10%','5%','3%','1.5%','.5%']
-testWeightList = [.5,.3,.1,.05,.03,.015,.005]
-
-results = {x:0 for x in testInputList}
-results2 = {x:0 for x in testInputList}
