@@ -245,9 +245,9 @@ def createTheme():
 
     with open(fileDir+'cnames.txt', 'w') as cNameFile:
 
-        for idx, cName in enumerate(cardNames):
+        for idx, cName in enumerate(cardNames, start = 1):
     
-            if idx < len(cardNames)-1:
+            if idx < len(cardNames):
                 cNameFile.write(str(cName)+'\n')
 
             else:
@@ -255,9 +255,9 @@ def createTheme():
 
     with open(fileDir+'tnames.txt', 'w') as tNameFile:
 
-        for idx, tName in enumerate(tierNames):
+        for idx, tName in enumerate(tierNames, start = 1):
 
-            if idx < len(tierNames)-1:
+            if idx < len(tierNames):
                 tNameFile.write(str(tName)+'\n')
 
             else:
@@ -265,9 +265,9 @@ def createTheme():
 
     with open(fileDir+'tchances.txt', 'w') as tChanceFile:
 
-        for idx, tChance in enumerate(tierChances):
+        for idx, tChance in enumerate(tierChances, start = 1):
 
-            if idx < len(tierChances)-1:
+            if idx < len(tierChances):
                 tChanceFile.write(str(tChance)+'\n')
 
             else:
@@ -355,9 +355,9 @@ def editTheme():
 
         with open(fileDir+'cnames.txt', 'w') as cNameFile:
 
-            for idx, cName in enumerate(cardNames):
+            for idx, cName in enumerate(cardNames, start = 1):
 
-                if idx < len(cardNames)-1:
+                if idx < len(cardNames):
                     cNameFile.write(cName+'\n')
 
                 else:
@@ -412,9 +412,9 @@ def createPack():
 
     with open(fileDir+'basicChances.txt', 'w') as basicChanceFile:
 
-        for idx, bChance in enumerate(baseThemeChances):
+        for idx, bChance in enumerate(baseThemeChances, start = 1):
 
-            if len(baseThemeChances)-1 != idx:
+            if idx < len(baseThemeChances):
                 basicChanceFile.write(str(bChance)+'\n')
 
             else:
@@ -423,9 +423,9 @@ def createPack():
     with open(fileDir+'pconfigs.txt', 'w') as pConfigFile:
         pconfigs = [packPrice, packCardAmt, themeCardChance, maxThemeCards]
 
-        for idx, config in enumerate(pconfigs):
+        for idx, config in enumerate(pconfigs, start = 1):
 
-            if len(pconfigs)-1 != idx:
+            if idx < len(pconfigs):
                 pConfigFile.write(str(config)+'\n')
 
             else:
