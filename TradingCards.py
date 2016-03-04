@@ -1,8 +1,7 @@
-from time import perf_counter as pc
-pc()
+import time
+time.clock()
 from os.path import exists
 from os import makedirs, listdir
-
 
 
 class Card:
@@ -14,15 +13,10 @@ class Card:
     cardTheme = Theme
     '''
 
-
     def __init__(self, cardName, cardTier, cardTheme):
-
         self.cardName = cardName
         self.cardTier = cardTier
         self.cardTheme = cardTheme
-
-
-
 
 
 class Theme:
@@ -33,14 +27,11 @@ class Theme:
     themeTierChances = tuple (chances for the corresponding theme tier)
     ~(should be same length as themeTiers)
     '''
-
-
     def __init__(self, themeName):
         self.themeName = themeName
         self.themeCardNames = self.readCardNames()
         self.themeTiers = self.readTierNames()
         self.themeTierChances = self.readTierChances()
-
 
     def readCardNames(self):
 
@@ -49,14 +40,12 @@ class Theme:
 
         return tuple(cardNameList)
 
-
     def readTierNames(self):
 
         with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
             tierNameList = [x.strip() for x in tierNames.readlines()]
 
         return tuple(tierNameList)
-
 
     def readTierChances(self):
 
@@ -65,13 +54,11 @@ class Theme:
 
         return tuple(tierChanceList)
 
-
     def pickTier(self):
 
         tier = weightchoice(self.themeTiers, self.themeTierChances)
 
         return tier
-
 
     def pickName(self):
 
@@ -79,18 +66,13 @@ class Theme:
 
         return name
 
-
     def makeCard(self):
 
         return Card(self.pickName(), self.pickTier(), self.themeName)
 
-
     def __bool__(self):
 
         return True
-
-
-
 
 class Pack:
     '''
@@ -105,12 +87,10 @@ class Pack:
     '''
 
     def __init__(self, packName):
-
         self.packName = packName
         self.packPrice, self.cardAmt, self.themeCardChance, self.maxThemed = self.readConfigs()
         self.basicChances = self.readBasicChances()
         self.basicTheme, self.extraTheme = self.readThemes()
-
 
     def openPack(self):
 
@@ -126,7 +106,6 @@ class Pack:
                 cardList.append(Theme(self.basicTheme).makeCard())
 
         return tuple(cardList)
-
 
     def readConfigs(self):
         #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
@@ -145,7 +124,6 @@ class Pack:
 
         return configs
 
-
     def readBasicChances(self):
 
         bclist = []
@@ -156,7 +134,6 @@ class Pack:
                 bclist.append(float(bc.strip()))
 
         return tuple(bclist)
-
 
     def readThemes(self):
 
@@ -185,7 +162,6 @@ def inpConf(inpstr):
 
 
 def createTheme():
-
     cardNames = []
     tierNames = []
     cardName = ''
@@ -275,7 +251,6 @@ def createTheme():
             
 
 def editTheme():
-
     isTheme = False
     themeList = listdir('themes')
     themeStr = ', '.join(themeList)[0:]
@@ -363,7 +338,6 @@ def editTheme():
                 else:
                     cNameFile.write(cName)
 
-
 def createPack():
 
     baseTheme = 'Basic'
@@ -431,21 +405,18 @@ def createPack():
             else:
                 pConfigFile.write(str(config))
 
-
 def randint(maxInt):
 
     global seedTime
-    seed = int(seedTime * (2**30)-pc()+.1+.1+.1)
-    seedMask = int(pc() * (2**30)-pc()+.1+.1+.1)
-    seedTime =  pc() - (seedTimeMod*1*pc())
+    seed = int(seedTime * (2**30)-time.clock()+.1+.1+.1)
+    seedMask = int(time.clock() * (2**30)-time.clock()+.1+.1+.1)
+    seedTime =  time.clock() - (seedTimeMod*1*time.clock())
     return range(int(maxInt))[(seed^seedMask)%maxInt]
-
 
 def weightchoice(inputList, weightList = None, maxPrecision = 3):
 
     global seedTime
     seed = int(seedTime * (2**30)+.1+.1+.1)
-
     if weightList == None:
         weightList = [1/len(inputList) for x in inputList]
     
@@ -463,16 +434,16 @@ def weightchoice(inputList, weightList = None, maxPrecision = 3):
         for i in range(int(weight*(10**maxPrecision))):
             popList.append(inp)
 
-    seedOffset = int(pc()*512-pc()+.1+.1+.1)
-    seedTime =  pc() - (seedTimeMod*1*pc())    
+    seedOffset = int(time.clock()*512-time.clock()+.1+.1+.1)
+    seedTime =  time.clock() - (seedTimeMod*1*time.clock())    
     return popList[~(seed^seedOffset)%len(popList)]
 
+    
 
 def readThemes():
 
     themes = {themeName : Theme(themeName) for themeName in listdir('themes')}
     return themes
-
 
 def readPacks():
  
@@ -483,5 +454,5 @@ themes = readThemes()
 
 packs = readPacks()
 
-seedTime = pc()
-seedTimeMod = pc()*16
+seedTime = time.clock()
+seedTimeMod = time.clock()*16
