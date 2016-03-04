@@ -301,6 +301,17 @@ def createPack():
             else:
                 pConfigFile.write(str(config))
 
+def randInt(maxInt):
+
+    global seedTime
+    
+    seed = int(seedTime * 1000000000-time.clock()+.1+.1+.1)
+
+    seedOffset = int(time.clock() * 1000000000-time.clock()+.1+.1+.1)
+
+    seedTime =  time.clock() - (seedTimeMod*1*time.clock())
+    
+    return range(maxInt)[(seed^seedOffset)%maxInt]
 def readThemes():
     themes = {themeName : Theme(themeName) for themeName in listdir('themes')}
     return themes
