@@ -119,7 +119,7 @@ class Pack:
 
         for x in range(self.cardAmt):
 
-            if randint(100) <= self.themeCardChance*100 and themeCt < self.maxThemed:
+            if randint(0, 100) <= self.themeCardChance*100 and themeCt < self.maxThemed:
                 cardList.append(Theme(self.extraTheme).makeCard())
                 themeCt += 1
             else:
@@ -432,22 +432,31 @@ def createPack():
                 pConfigFile.write(str(config))
 
 
-def randint(maxInt):
+def randint(minInt = 0, maxInt = 100):
 
     global seedTime
     seed = int(seedTime * (2**30)-pc()+.1+.1+.1)
     seedMask = int(pc() * (2**30)-pc()+.1+.1+.1)
     seedTime =  pc() - (seedTimeMod*1*pc())
-    return range(int(maxInt))[(seed^seedMask)%maxInt]
+    return range(int(minInt), int(maxInt))[(seed^seedMask)%maxInt]
 
 
-def weightchoice(inputList, weightList = None, maxPrecision = 3):
+def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
 
     global seedTime
     seed = int(seedTime * (2**30)+.1+.1+.1)
 
+    try:
+        draws = int(draws)
+
+    except:
+        raise TypeError('draws must be convertable to int()')
+
     if weightList == None:
         weightList = [1/len(inputList) for x in inputList]
+
+    if draws < 1:
+        raise ValueError('You can\'t have less than 1 draw')
     
     if not len(inputList) == len(weightList):
         raise ValueError('The length of input list ({0}) and weight list ({1}) must be equal'.format(len(inputList),
@@ -463,9 +472,20 @@ def weightchoice(inputList, weightList = None, maxPrecision = 3):
         for i in range(int(weight*(10**maxPrecision))):
             popList.append(inp)
 
-    seedOffset = int(pc()*512-pc()+.1+.1+.1)
-    seedTime =  pc() - (seedTimeMod*1*pc())    
-    return popList[~(seed^seedOffset)%len(popList)]
+    drawsList = []
+
+    for x in range(draws):
+
+        seedOffset = int(pc()*512-pc()+.1+.1+.1)
+        seedTime =  pc() - (seedTimeMod*1*pc())
+
+        if draws == 1:
+            return popList[~(seed^seedOffset)%len(popList)]
+
+        else:
+            drawsList.append(popList[~seed^seedOffset]%len(popList))
+
+    return drawsList
 
 
 def readThemes():
