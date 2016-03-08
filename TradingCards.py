@@ -111,16 +111,18 @@ class Pack:
     cardsInPack = int (1->X)
     cardTierChances = None/tuple (lowest rarity -> highest rarity)(add up to 1)
     ~corresponds to the basic theme, set to 0 for no chance of that tier
-    themeCardChance = None/int (0->1)
+    themeCardChance = None/int (0->1) - chance to replace 1 card in your pack with a themed card
     packTheme = None/Theme (this is an extra theme in addition to the default basic theme)
     '''
+
+    global themes
 
     def __init__(self, packName):
 
         self.packName = packName
+        self.basicTheme, self.extraTheme = self.readThemes()
         self.packPrice, self.cardAmt, self.themeCardChance, self.maxThemed = self.readConfigs()
         self.basicChances = self.readBasicChances()
-        self.basicTheme, self.extraTheme = self.readThemes()
 
 
     def openPack(self):
@@ -509,8 +511,6 @@ def readPacks():
     return packs
 
 themes = readThemes()
-
 packs = readPacks()
-
 seedTime = pc()
 seedTimeMod = pc()*16
