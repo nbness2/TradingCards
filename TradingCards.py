@@ -444,13 +444,28 @@ def createPack():
                 pConfigFile.write(str(config))
 
 
-def randint(minInt = 0, maxInt = 100):
+def randint(minInt = 0, maxInt = 100, draws = 1):
 
     global seedTime
-    seed = int(seedTime * (2**30)-pc()+.1+.1+.1)
-    seedMask = int(pc() * (2**30)-pc()+.1+.1+.1)
     seedTime =  pc() - (seedTimeMod*1.2*pc())
-    return range(int(minInt), int(maxInt)+1)[(seed^seedMask)%maxInt]
+    numList = [num for num in range(int(minInt), int(maxInt)+1)]
+    drawList = []
+
+    for x in range(draws):
+        seed = int(seedTime * (2**30)+.3)
+        seedMask = int(pc() * (2**31)-pc()+.1+.1+.1)
+        seedTime =  pc() - (seedTimeMod*1.2*pc())
+
+        if draws == 1:
+            return numList[((int(seedTime*seed)^seedMask)%maxInt)]
+
+        else:
+            drawList.append(numList[((int(seedTime*seed)^seedMask)%maxInt)])
+
+    return drawList
+        
+        
+
 
 
 def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
@@ -491,7 +506,7 @@ def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
         seedTime =  pc() - (seedTimeMod*1.2*pc())
 
         if draws == 1:
-            return popList[~(seed^seedOffset)%len(popList)]
+            return popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
 
         else:
             drawsList.append(popList[~(int(seedTime*seed)^seedOffset)%len(popList)])
