@@ -1,7 +1,16 @@
-from time import perf_counter as pc
-pc()
 from os.path import exists
 from os import makedirs, listdir
+
+try:
+    from time import perf_counter as pc
+
+except ImportError:
+    from time import clock as pc
+
+except:
+    raise ImportError('Failed to import perf_counter and clock from time module')
+
+pc()
 
 
 
@@ -23,8 +32,6 @@ class Card:
 
 
 
-
-
 class Theme:
     '''
     themeName = str
@@ -36,6 +43,7 @@ class Theme:
 
 
     def __init__(self, themeName):
+
         self.themeName = themeName
         self.themeCardNames = self.readCardNames()
         self.themeTiers = self.readTierNames()
@@ -69,14 +77,12 @@ class Theme:
     def pickTier(self):
 
         tier = weightchoice(self.themeTiers, self.themeTierChances)
-
         return tier
 
 
     def pickName(self):
 
         name = weightchoice(self.themeCardNames)
-
         return name
 
 
@@ -437,14 +443,13 @@ def randint(minInt = 0, maxInt = 100):
     global seedTime
     seed = int(seedTime * (2**30)-pc()+.1+.1+.1)
     seedMask = int(pc() * (2**30)-pc()+.1+.1+.1)
-    seedTime =  pc() - (seedTimeMod*1*pc())
-    return range(int(minInt), int(maxInt))[(seed^seedMask)%maxInt]
+    seedTime =  pc() - (seedTimeMod*1.2*pc())
+    return range(int(minInt), int(maxInt)+1)[(seed^seedMask)%maxInt]
 
 
 def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
 
     global seedTime
-    seed = int(seedTime * (2**30)+.1+.1+.1)
 
     try:
         draws = int(draws)
@@ -475,15 +480,15 @@ def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
     drawsList = []
 
     for x in range(draws):
-
+        seed = int(seedTime * (2**30)+.1+.1+.1)
         seedOffset = int(pc()*512-pc()+.1+.1+.1)
-        seedTime =  pc() - (seedTimeMod*1*pc())
+        seedTime =  pc() - (seedTimeMod*1.2*pc())
 
         if draws == 1:
             return popList[~(seed^seedOffset)%len(popList)]
 
         else:
-            drawsList.append(popList[~seed^seedOffset]%len(popList))
+            drawsList.append(popList[~(int(seedTime*seed)^seedOffset)%len(popList)])
 
     return drawsList
 
