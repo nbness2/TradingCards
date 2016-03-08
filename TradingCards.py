@@ -86,9 +86,14 @@ class Theme:
         return name
 
 
-    def makeCard(self):
+    def makeCards(self, cardAmt = 1):
 
-        return Card(self.pickName(), self.pickTier(), self.themeName)
+        cardList = []
+
+        for x in range(cardAmt):
+            cardList.append(Card(self.pickName(), self.pickTier(), self.themeName))
+
+        return tuple(cardList)
 
 
     def __bool__(self):
@@ -120,18 +125,17 @@ class Pack:
 
     def openPack(self):
 
-        cardList = []
-        themeCt = 0
+        packCards = []
+        packCards.extend(themes[self.basicTheme].makeCards(self.cardAmt))
 
-        for x in range(self.cardAmt):
+        for x in range(self.maxThemed):
 
-            if randint(0, 100) <= self.themeCardChance*100 and themeCt < self.maxThemed:
-                cardList.append(Theme(self.extraTheme).makeCard())
-                themeCt += 1
-            else:
-                cardList.append(Theme(self.basicTheme).makeCard())
+            rand = randint()
 
-        return tuple(cardList)
+            if rand <= self.themeCardChance * 100:
+                packCards[randint(0,len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
+
+        return tuple(packCards)
 
 
     def readConfigs(self):
