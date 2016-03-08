@@ -2,7 +2,9 @@ import TradingCards as tc
 
 def run_tests():
 
-    testInputList = ['50%','30%','10%','5%','3%','1.5%','.5%']
+    testInputList = ['50','30','10','5','3','1.5','.5']
+    perfectResults = {x+'%':int(float(x)*100) for x in testInputList}
+    testInputList = [x+'%' for x in testInputList]
     testWeightList = [.5,.3,.1,.05,.03,.015,.005]
     results = {x:0 for x in testInputList}
     print('Opening packs')
@@ -20,13 +22,35 @@ def run_tests():
             for card in cards:
                 print('\t\t', card.cardTier, card.cardName)
 
-    print('\nTesting 10000 iterations of RNG')
+    print('\nTesting 10000 iterations of 1-draw weighted choice rng~~')
 
-    for x in range(10000):
-        results[tc.weightchoice(testInputList, testWeightList)]+=1
+    for test in range(10000):
+        result = tc.weightchoice(testInputList, testWeightList)
+        results[result] += 1
+
+    print(results)
+    results = {x:0 for x in testInputList}
+    print('\nTesting 1000 iterations of 10-draw weighted choice rng~~')
+
+    for test in range(1000):
+        resultList = tc.weightchoice(testInputList, testWeightList, draws = 10)
+        for result in resultList:
+            results[result] += 1
+
+    print(results)
+    results = {x:0 for x in testInputList}
+    print('\nTesting 100 iterations of 100-draw weighted choice rng~~')
+
+    for test in range(100):
+        resultList = tc.weightchoice(testInputList, testWeightList, draws = 100)
+        for result in resultList:
+            results[result] += 1
 
     print(results)
 
+    print('\nPerfect results~~')
+    print(perfectResults)
 
 if __name__ == '__main__':
     run_tests()
+    input()
