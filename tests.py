@@ -1,4 +1,6 @@
 import TradingCards as tc
+import pyrand
+
 
 def runTests():
     rngTest()
@@ -14,7 +16,7 @@ def rngTest():
     print('\nTesting 10000 iterations of 1-draw weighted choice rng~~')
 
     for test in range(10000):
-        result = tc.weightchoice(testInputList, testWeightList)
+        result = pyrand.weightchoice(testInputList, testWeightList)
         results[result] += 1
 
     print(results)
@@ -22,7 +24,7 @@ def rngTest():
     print('\nTesting 1000 iterations of 10-draw weighted choice rng~~')
 
     for test in range(1000):
-        resultList = tc.weightchoice(testInputList, testWeightList, draws = 10)
+        resultList = pyrand.weightchoice(testInputList, testWeightList, draws = 10)
 
         for result in resultList:
             results[result] += 1
@@ -32,7 +34,7 @@ def rngTest():
     print('\nTesting 100 iterations of 100-draw weighted choice rng~~')
 
     for test in range(100):
-        resultList = tc.weightchoice(testInputList, testWeightList, draws = 100)
+        resultList = pyrand.weightchoice(testInputList, testWeightList, draws = 100)
 
         for result in resultList:
             results[result] += 1

@@ -1,5 +1,5 @@
-from os.path import exists
-from os import makedirs, listdir
+from os import listdir
+import pyrand
 
 try:
     from time import perf_counter as pc
@@ -76,13 +76,13 @@ class Theme:
 
     def pickTier(self):
 
-        tier = weightchoice(self.themeTiers, self.themeTierChances)
+        tier = pyrand.weightchoice(self.themeTiers, self.themeTierChances)
         return tier
 
 
     def pickName(self):
 
-        name = weightchoice(self.themeCardNames)
+        name = pyrand.weightchoice(self.themeCardNames)
         return name
 
 
@@ -132,10 +132,10 @@ class Pack:
 
         for x in range(self.maxThemed):
 
-            rand = randint()
+            rand = pyrand.randint()
 
             if rand <= self.themeCardChance * 100:
-                packCards[randint(0,len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
+                packCards[pyrand.randint(0,len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
 
         return tuple(packCards)
 
@@ -196,324 +196,6 @@ def inpConf(inpstr):
             print('Invalid input: {0} . Please try again'.format(reply))
 
 
-def createTheme():
-
-    cardNames = []
-    tierNames = []
-    cardName = ''
-    tierName = ''
-    tierChances = []
-    tierChance = 0
-    breakLoop = False
-    usedChance = 0
-    themeName = inpConf('Input Theme name: ')
-    fileDir = 'themes/'+themeName+'/'
-
-    while not breakLoop:
-        cardName = inpConf('Input card name (-- to exit): ')
-
-        if cardName == '--':
-            breakLoop = True
-
-        else:
-            cardNames.append(cardName)
-
-    breakLoop = False
-
-    while not breakLoop:
-        tierName = inpConf('Input Tier name (-- to exit): ')
-
-        if tierName == '--':
-            breakLoop = True
-
-        else:
-            tierNames.append(tierName)
-
-    breakLoop = False
-
-    while not breakLoop:
-        tierChances = []
-
-        for tierName in tierNames:
-
-            try:
-                tierChance = float(inpConf('Rarity for tier: {0} . {1:.3f} remaining chance. '.format(tierName, 100-usedChance*100)))/100
-                usedChance += tierChance
-                tierChances.append(tierChance)
-
-                if usedChance > 1:
-                    print('Cannot use over 100 chance!')
-                    break
-
-            except:
-                print('Invalid value: {0}'.format(x))
-                break
-
-        if len(tierNames) == len(tierChances):
-            breakLoop = True
-
-    if not exists(fileDir):
-        makedirs(fileDir)
-
-    with open(fileDir+'cnames.txt', 'w') as cNameFile:
-
-        for idx, cName in enumerate(cardNames, start = 1):
-    
-            if idx < len(cardNames):
-                cNameFile.write(str(cName)+'\n')
-
-            else:
-                cNameFile.write(str(cName))
-
-    with open(fileDir+'tnames.txt', 'w') as tNameFile:
-
-        for idx, tName in enumerate(tierNames, start = 1):
-
-            if idx < len(tierNames):
-                tNameFile.write(str(tName)+'\n')
-
-            else:
-                tNameFile.write(str(tName))
-
-    with open(fileDir+'tchances.txt', 'w') as tChanceFile:
-
-        for idx, tChance in enumerate(tierChances, start = 1):
-
-            if idx < len(tierChances):
-                tChanceFile.write(str(tChance)+'\n')
-
-            else:
-                tChanceFile.write(str(tChance))
-            
-
-def editTheme():
-
-    isTheme = False
-    themeList = listdir('themes')
-    themeStr = ', '.join(themeList)[0:]
-    usedChance = 0
-    validChoice = False
-
-    while not isTheme:
-        themeName = inpConf('{0}\nInput the exact name of the theme you are editing: '.format(themeStr))
-
-        if themeName in themeList:
-            isTheme = True
-
-        else:
-            print('Invalid theme:', themeName)
-
-    fileDir = 'themes/'+themeName+'/'
-
-    with open(fileDir+'cnames.txt', 'r') as cNameFile:
-        cardNames =  [name.strip() for name in cNameFile.readlines()]
-
-    cardNamesL = [name.lower() for name in cardNames]
-
-    while True:
-        cardNamesL = [name.lower() for name in cardNames]
-        cardNameStr = ', '.join(cardNames)
-        validChoice = False
-        cardChoice = inpConf('(E)diting, (A)dding, or (D)eleting a card name (-- to quit): ').lower()
-
-        if cardChoice[0] == 'e':
-            print(cardNameStr)
-            nameChoice = inpConf('Which name are you editing: ')
-            validChoice = True
-
-        elif cardChoice[0] == 'a':
-            nameChoice = inpConf('Which name are you adding: ')
-            validChoice = True
-
-        elif cardChoice[0] == 'd':
-            print(cardNameStr)
-            nameChoice = inpConf('Which name are you deleting: ')
-            validChoice = True
-
-        elif cardChoice == '--':
-            validChoice = False
-            break
-
-        else:
-            validChoice = False
-
-        if validChoice:
-
-            if cardChoice == 'a':
-
-                if not nameChoice.lower() in cardNamesL:
-                    cardNames.append(nameChoice)
-
-                else:
-                    print('Card name already exists!')
-
-            elif nameChoice.lower() in cardNamesL:
-                nameIndex = cardNamesL.index(nameChoice.lower())
-
-                if cardChoice == 'e':
-                    cardNames[nameIndex] = inpConf('Input card name: ')
-
-                elif cardChoice == 'd':
-                    del cardNames[nameIndex]
-
-                else:
-                    print('editTheme error', cardNames, nameChoice)
-
-            else:
-                print('Name',nameChoice,'not found.')
-
-        else:
-            print('Invalid input:', cardChoice)
-
-        with open(fileDir+'cnames.txt', 'w') as cNameFile:
-
-            for idx, cName in enumerate(cardNames, start = 1):
-
-                if idx < len(cardNames):
-                    cNameFile.write(cName+'\n')
-
-                else:
-                    cNameFile.write(cName)
-
-
-def createPack():
-
-    baseTheme = 'Basic'
-    baseThemeTiers = Theme(baseTheme).themeTiers
-    baseThemeChances = []
-    themeCardChance = 0
-    maxThemeCards = 0
-    usedChance = 0
-    packCardAmt = 0
-    packPrice = 0
-    breakLoop = False
-    packName = inpConf('Input Pack name: ')
-    packPrice = int(inpConf('Input Pack price: '))
-    packCardAmt = int(inpConf('Input amout of cards in this Pack: '))
-    fileDir = 'packs/'+packName+'/'
-
-    while not breakLoop:
-
-        for tierName in baseThemeTiers:
-            tierChance = float(inpConf('Rarity for {0} tier: {1} . {2:.2f} remaining chance. '.format(baseTheme, tierName, 100-usedChance*100)))/100
-            usedChance += tierChance
-            baseThemeChances.append(tierChance)
-
-            if usedChance > 1:
-                print('Cannot use over 100 chance!')
-                break
-
-        if len(baseThemeTiers) == len(baseThemeChances):
-            breakLoop = True
-
-    extraTheme = inpConf('Name of extra theme (-- for none): ')
-
-    if extraTheme == '--':
-        extraTheme == None
-
-    else:
-        themeCardChance = int(inpConf('Input theme card chance: '))/100
-        maxThemeCards = int(inpConf('Input max theme cards per pack: '))
-
-    if not exists(fileDir):
-        makedirs(fileDir)
-
-    with open(fileDir+'themes.txt', 'w') as themeNames:
-        themeNames.write(baseTheme+'\n')
-        themeNames.write(extraTheme)
-
-    with open(fileDir+'basicChances.txt', 'w') as basicChanceFile:
-
-        for idx, bChance in enumerate(baseThemeChances, start = 1):
-
-            if idx < len(baseThemeChances):
-                basicChanceFile.write(str(bChance)+'\n')
-
-            else:
-                basicChanceFile.write(str(bChance))
-
-    with open(fileDir+'pconfigs.txt', 'w') as pConfigFile:
-        pconfigs = [packPrice, packCardAmt, themeCardChance, maxThemeCards]
-
-        for idx, config in enumerate(pconfigs, start = 1):
-
-            if idx < len(pconfigs):
-                pConfigFile.write(str(config)+'\n')
-
-            else:
-                pConfigFile.write(str(config))
-
-
-def randint(minInt = 0, maxInt = 100, draws = 1):
-
-    global seedTime
-    seedTime =  pc() - (seedTimeMod*1.2*pc())
-    numList = [num for num in range(int(minInt), int(maxInt)+1)]
-    drawList = []
-
-    for x in range(draws):
-        seed = int(seedTime * (2**30)+.3)
-        seedMask = int(pc() * (2**31)-pc()+.1+.1+.1)
-        seedTime =  pc() - (seedTimeMod*1.2*pc())
-
-        if draws == 1:
-            return numList[((int(seedTime*seed)^seedMask)%maxInt)]
-
-        else:
-            drawList.append(numList[((int(seedTime*seed)^seedMask)%maxInt)])
-
-    return drawList
-        
-        
-
-
-
-def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
-
-    global seedTime
-
-    try:
-        draws = int(draws)
-
-    except:
-        raise TypeError('draws must be convertable to int()')
-
-    if weightList == None:
-        weightList = [1/len(inputList) for x in inputList]
-
-    if draws < 1:
-        raise ValueError('You can\'t have less than 1 draw')
-    
-    if not len(inputList) == len(weightList):
-        raise ValueError('The length of input list ({0}) and weight list ({1}) must be equal'.format(len(inputList),
-                                                                                                     len(weightList)))
-    if not round(sum(weightList), maxPrecision) == 1:
-        print(round(sum(weightList),maxPrecision))
-        raise ValueError('The sum of all weights ({0}) must equal 1'.format(sum(weightList)))
-
-    popList = []
-
-    for inp, weight in zip(inputList, weightList):
-
-        for i in range(int(weight*(10**maxPrecision))):
-            popList.append(inp)
-
-    drawsList = []
-
-    for x in range(draws):
-        seed = int(seedTime * (2**30)+.1+.1+.1)
-        seedOffset = int(pc()*512-pc()+.1+.1+.1)
-        seedTime =  pc() - (seedTimeMod*1.2*pc())
-
-        if draws == 1:
-            return popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
-
-        else:
-            drawsList.append(popList[~(int(seedTime*seed)^seedOffset)%len(popList)])
-
-    return drawsList
-
-
 def readThemes():
 
     themes = {themeName : Theme(themeName) for themeName in listdir('themes')}
@@ -527,5 +209,3 @@ def readPacks():
 
 themes = readThemes()
 packs = readPacks()
-seedTime = pc()
-seedTimeMod = pc()*16
