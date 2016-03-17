@@ -104,7 +104,7 @@ class Theme:
 
 
 class Pack:
-    '''
+    """
     Base class for all packs
     These are values that are assumed to be correct to work correctly
     packPrice = int (0->X)
@@ -113,12 +113,11 @@ class Pack:
     ~corresponds to the basic theme, set to 0 for no chance of that tier
     themeCardChance = None/int (0->1) - chance to replace 1 card in your pack with a themed card
     packTheme = None/Theme (this is an extra theme in addition to the default basic theme)
-    '''
+    """
 
     global themes
 
     def __init__(self, packName):
-
         self.packName = packName
         self.basicTheme, self.extraTheme = self.readThemes()
         self.packPrice, self.cardAmt, self.themeCardChance, self.maxThemed = self.readConfigs()
@@ -126,16 +125,15 @@ class Pack:
 
 
     def openPack(self):
-
         packCards = []
         packCards.extend(themes[self.basicTheme].makeCards(self.cardAmt))
 
         for x in range(self.maxThemed):
 
-            rand = pyrand.randint()
+            rand = pyrand.randint()/100
 
-            if rand <= self.themeCardChance * 100:
-                packCards[pyrand.randint(0,len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
+            if rand <= self.themeCardChance:
+                packCards[pyrand.randint(0, len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
 
         return tuple(packCards)
 
@@ -159,9 +157,7 @@ class Pack:
 
 
     def readBasicChances(self):
-
         bclist = []
-
         with open('packs/{0}/basicChances.txt'.format(self.packName), 'r') as bcFile:
 
             for bc in bcFile.readlines():
@@ -171,7 +167,6 @@ class Pack:
 
 
     def readThemes(self):
-
         with open('packs/{0}/themes.txt'.format(self.packName), 'r') as themeFile:
             themeList = [theme.strip() for theme in themeFile]
 
@@ -179,12 +174,10 @@ class Pack:
 
 
 def inpConf(inpstr):
-
     conf = False
-
     while not conf:
         reply = input(inpstr)
-        confinp= input('Confirm "{0}" Y/N: '.format(reply))[0].lower()
+        confinp = input('Confirm "{0}" Y/N: '.format(reply))[0].lower()
 
         if confinp == 'n':
             conf = False
@@ -196,16 +189,13 @@ def inpConf(inpstr):
             print('Invalid input: {0} . Please try again'.format(reply))
 
 
-def readThemes():
-
-    themes = {themeName : Theme(themeName) for themeName in listdir('themes')}
-    return themes
-
-
 def readPacks():
- 
-    packs = {packName : Pack(packName) for packName in listdir('packs')}
-    return packs
+    return {packName : Pack(packName) for packName in listdir('packs')}
 
-themes = readThemes()
-packs = readPacks()
+def readThemes():
+    return {themeName : Theme(themeName) for themeName in listdir('themes')}
+
+def readTP():
+    return readThemes(), readPacks()
+
+themes, packs = readTP()

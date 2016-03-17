@@ -119,7 +119,7 @@ def createPack():
         if len(baseThemeTiers) == len(baseThemeChances):
             breakLoop = True
 
-    extraTheme = inpConf('Name of extra theme (-- for none): ')
+    extraTheme = inpConf('Exact name of extra theme (-- for none): ')
 
     if extraTheme == '--':
         extraTheme == None

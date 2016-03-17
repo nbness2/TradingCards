@@ -8,10 +8,10 @@ def runTests():
 
 def rngTest():
 
-    testInputList = ['50','30','10','5','3','1.5','.5']
+    testInputList = ('50', '30', '10', '5', '3', '1.5', '.5')
     perfectResults = {x+'%':int(float(x)*100) for x in testInputList}
     testInputList = [x+'%' for x in testInputList]
-    testWeightList = [.5,.3,.1,.05,.03,.015,.005]
+    testWeightList = (.5, .3, .1, .05, .03, .015, .005)
     results = {x:0 for x in testInputList}
     print('\nTesting 10000 iterations of 1-draw weighted choice rng~~')
 
@@ -40,9 +40,20 @@ def rngTest():
             results[result] += 1
 
     print(results)
-
     print('\nPerfect results~~')
     print(perfectResults)
+
+    testInputList = [x+1 for x in range(25)]
+    results = {x:0 for x in testInputList}
+    print('\nTesting 100 iterations of 100-draw non-weighted 1-25 randint() choice rng~~')
+
+    for test in range(100):
+        resultList = pyrand.randint(1, 25, 100)
+
+        for result in resultList:
+            results[result] += 1
+
+    print(results)
 
 def packTest():
 
@@ -62,4 +73,3 @@ def packTest():
 
 if __name__ == '__main__':
     runTests()
-    input()
