@@ -46,9 +46,10 @@ def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
     drawsList = []
 
     for x in range(draws):
-        seed = int(seedTime * (2**30)+.1+.1+.1)
-        seedOffset = int(pc()*512-pc()+.1+.1+.1)
-        seedTime =  pc() - (seedTimeMod*1.2*pc())
+        seed = int(seedTime * (2**31)+.3)
+        seedOffset = int(pc()*512-pc()+.3)
+        seedTime = pc() - (seedTimeMod*pc())
+        result = popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
 
         if draws == 1:
             return popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
@@ -58,5 +59,5 @@ def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
 
     return drawsList
 
-seedTime = pc() * 8
-seedTimeMod = pc() * 16
+seedTime = pc() * 16
+seedTimeMod = seedTime*2
