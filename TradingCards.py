@@ -119,20 +119,20 @@ class Pack:
 
     def __init__(self, packName):
         self.packName = packName
-        self.basicTheme, self.extraTheme = self.readThemes()
+        self.baseTheme, self.extraTheme = self.readThemes()
         self.packPrice, self.cardAmt, self.themeCardChance, self.maxThemed = self.readConfigs()
         self.basicChances = self.readBasicChances()
 
 
     def openPack(self):
         packCards = []
-        packCards.extend(themes[self.basicTheme].makeCards(self.cardAmt))
+        packCards.extend(themes[self.baseTheme].makeCards(self.cardAmt))
 
         for x in range(self.maxThemed):
 
-            rand = pyrand.randint()/100
+            rand = pyrand.randint()/175
 
-            if rand <= self.themeCardChance:
+            if rand <= self.themeCardChance*1.4:
                 packCards[pyrand.randint(0, len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
 
         return tuple(packCards)

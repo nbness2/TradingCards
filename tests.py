@@ -65,11 +65,46 @@ def packTest():
         print(pack.packName, pack.cardAmt, pack.themeCardChance, pack.maxThemed)
 
         for x in range(10):
-            print('\tPack', x+1)
+            print('\tPack', x+1, end='\n\t\t')
             cards = pack.openPack()
 
             for card in cards:
-                print('\t\t', card.cardTier, card.cardName)
+                print(card.cardTier, card.cardName, end=', ')
+
+            print()
+
+def testPack(packName, packAmt = 25, printRes = False):
+
+    try:
+        pack = tc.packs[packName]
+
+    except:
+        raise ValueError('Invalid pack name: {0}'.format(packName))
+
+    tca = packAmt*pack.cardAmt
+    cardList = []
+    tcc = 0
+
+    for x in range(packAmt):
+        cardList.extend(pack.openPack())
+
+    for card in cardList:
+
+        if card.cardTheme == pack.extraTheme:
+            tcc += 1
+
+    cardList = []
+    tccp = round(tcc/tca*100, 4)
+
+    if printRes:
+        print(tcc, 'out of', tca, 'cards were themed giving a total of', tccp, '% themed cards')
+        print('optimal themed cards is', tca*pack.themeCardChance)
+
+    return tccp
+
+
+
 
 if __name__ == '__main__':
-    runTests()
+    for x in range(10):
+        testPack('Quacker Booster', packAmt = 1000, printRes = True)
