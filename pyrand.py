@@ -1,11 +1,5 @@
 try:
     from time import perf_counter as pc
-except ImportError:
-    from time import clock as pc
-except:
-    raise ImportError('Failed to import perf_counter and clock from time module')
-
-def randint(minInt = 0, maxInt = 100, draws = 1):
 
     global seedTime
     seedTime =  pc() - (seedTimeMod*1.2*pc())
@@ -16,9 +10,14 @@ def randint(minInt = 0, maxInt = 100, draws = 1):
         seed = int(seedTime * (2**30)+.3)
         seedMask = int(pc() * (2**31)-pc()+.1+.1+.1)
         seedTime =  pc() - (seedTimeMod*1.2*pc())
+except ImportError:
+    try:
+        from time import clock as pc
 
         if draws == 1:
             return numList[((int(seedTime*seed)^seedMask)%maxInt)]
+    except:
+        raise ImportError('Failed to import perf_counter and clock from time module')
 
         else:
             drawList.append(numList[((int(seedTime*seed)^seedMask)%maxInt)])
