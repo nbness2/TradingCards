@@ -100,11 +100,9 @@ def testPack(packName, packAmt = 25, printRes = False):
         print(tcc, 'out of', tca, 'cards were themed giving a total of', tccp, '% themed cards')
         print('optimal themed cards is', tca*pack.themeCardChance)
 
-    return tccp
+    return tcc, tccp
 
 
 
 
 if __name__ == '__main__':
-    for x in range(10):
-        testPack('Quacker Booster', packAmt = 1000, printRes = True)
