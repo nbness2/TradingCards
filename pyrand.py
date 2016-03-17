@@ -1,28 +1,16 @@
 try:
     from time import perf_counter as pc
 
-    global seedTime
-    seedTime =  pc() - (seedTimeMod*1.2*pc())
-    numList = [num for num in range(int(minInt), int(maxInt)+1)]
-    drawList = []
-
-    for x in range(draws):
-        seed = int(seedTime * (2**30)+.3)
-        seedMask = int(pc() * (2**31)-pc()+.1+.1+.1)
-        seedTime =  pc() - (seedTimeMod*1.2*pc())
 except ImportError:
     try:
         from time import clock as pc
 
-        if draws == 1:
-            return numList[((int(seedTime*seed)^seedMask)%maxInt)]
     except:
         raise ImportError('Failed to import perf_counter and clock from time module')
 
-        else:
-            drawList.append(numList[((int(seedTime*seed)^seedMask)%maxInt)])
+def randint(minInt = 0, maxInt = 100, draws = 1):
 
-    return drawList
+    return weightchoice(range(minInt, maxInt+1), draws = draws)
 
 
 def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
