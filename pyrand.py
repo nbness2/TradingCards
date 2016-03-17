@@ -23,25 +23,25 @@ def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
     except:
         raise TypeError('draws must be convertable to int()')
 
-    if weightList == None:
-        weightList = [1/len(inputList) for x in inputList]
-
     if draws < 1:
         raise ValueError('You can\'t have less than 1 draw')
-    
-    if not len(inputList) == len(weightList):
-        raise ValueError('The length of input list ({0}) and weight list ({1}) must be equal'.format(len(inputList),
+
+    if weightList == None:
+        popList = inputList
+
+    else:
+        weightSum = round(sum(weightList), maxPrecision)
+
+        if not len(inputList) == len(weightList):
+            raise ValueError('The length of input list {0} and weight list {1} must be equal'.format(len(inputList),
                                                                                                      len(weightList)))
-    if not round(sum(weightList), maxPrecision) == 1:
-        print(round(sum(weightList),maxPrecision))
-        raise ValueError('The sum of all weights ({0}) must equal 1'.format(sum(weightList)))
+        if not weightSum == 1:
+            raise ValueError('The sum of all weights ({0}) must equal 1'.format(weightSum))
 
-    popList = []
+        for inp, weight in zip(inputList, weightList):
 
-    for inp, weight in zip(inputList, weightList):
-
-        for i in range(int(weight*(10**maxPrecision))):
-            popList.append(inp)
+            for i in range(int(weight*(10**maxPrecision))):
+                popList.append(inp)
 
     drawsList = []
 
@@ -52,10 +52,10 @@ def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
         result = popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
 
         if draws == 1:
-            return popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
+            return result
 
         else:
-            drawsList.append(popList[~(int(seedTime*seed)^seedOffset)%len(popList)])
+            drawsList.append(result)
 
     return drawsList
 
