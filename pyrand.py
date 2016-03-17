@@ -16,6 +16,7 @@ def randint(minInt = 0, maxInt = 100, draws = 1):
 def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
 
     global seedTime
+    popList = []
 
     try:
         draws = int(draws)
