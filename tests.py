@@ -106,3 +106,4 @@ def testPack(packName, packAmt = 25, printRes = False):
 
 
 if __name__ == '__main__':
+    rngTest()

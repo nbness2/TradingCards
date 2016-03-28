@@ -10,8 +10,6 @@ except ImportError:
 except:
     raise ImportError('Failed to import perf_counter and clock from time module')
 
-pc()
-
 
 
 class Card:
@@ -25,7 +23,6 @@ class Card:
 
 
     def __init__(self, cardName, cardTier, cardTheme):
-
         self.cardName = cardName
         self.cardTier = cardTier
         self.cardTheme = cardTheme
@@ -43,7 +40,6 @@ class Theme:
 
 
     def __init__(self, themeName):
-
         self.themeName = themeName
         self.themeCardNames = self.readCardNames()
         self.themeTiers = self.readTierNames()
@@ -51,7 +47,6 @@ class Theme:
 
 
     def readCardNames(self):
-
         with open('themes/{0}/cnames.txt'.format(self.themeName), 'r') as cardNames:
             cardNameList = [x.strip() for x in cardNames.readlines()]
 
@@ -59,7 +54,6 @@ class Theme:
 
 
     def readTierNames(self):
-
         with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
             tierNameList = [x.strip() for x in tierNames.readlines()]
 
@@ -67,7 +61,6 @@ class Theme:
 
 
     def readTierChances(self):
-
         with open('themes/{0}/tchances.txt'.format(self.themeName), 'r') as tierChances:
             tierChanceList = [float(x) for x in tierChances.readlines()]
 
@@ -75,13 +68,11 @@ class Theme:
 
 
     def pickTier(self):
-
         tier = pyrand.weightchoice(self.themeTiers, self.themeTierChances)
         return tier
 
 
     def pickName(self):
-
         name = pyrand.weightchoice(self.themeCardNames)
         return name
 
