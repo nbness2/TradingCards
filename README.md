@@ -1,5 +1,7 @@
 # TradingCards
 
+I work on this when I can, but I do have life events such as work and girlfriend problems!
+
 ## Goals
 I have a few goals for this personal project.
 * Create a Trading Card game! (Think collectible cards like Baseball or Football cards)
