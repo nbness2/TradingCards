@@ -23,3 +23,5 @@ This is where you go if you want to edit a theme or pack (in the future)
 This is my own RNG. It's slower than the stdlib because... It's written in python!
 ### tests.py
 This holds the tests for testing that all the stuff works correctly
+### TCGui.py
+This is going to be the GUI for my project. Right now, just playing with pygame and figuring it out.
