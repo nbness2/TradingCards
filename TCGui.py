@@ -12,9 +12,6 @@ disWidth = 1000
 disHeight = 750
 gameDis = pygame.display.set_mode((disWidth, disHeight))
 pygame.display.set_caption('TCGui')
-cardImg = img.load('BasicCard.png')
-cardX, cardY = disWidth * .35, disHeight * .35
-xchange, ychange = 0, 0
 
 
 class Button:
@@ -45,36 +42,26 @@ def dispText(msg, textX, textY, font = 'freesansbold.ttf', fontSize = 20, textCo
     textRect.center = (textX, textY)
     gameDis.blit(textSurface, textRect)
 
-def drawCard(x, y):
-    gameDis.blit(cardImg, (x, y))
-
 while not crashed:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             crashed = True
         if event.type == pygame.KEYDOWN:
-
             if event.key == pygame.K_LEFT:
-                xchange = -1
             elif event.key == pygame.K_RIGHT:
-                xchange = 1
-
+                testSprite.move(1, 0)
             if event.key == pygame.K_UP:
-                ychange = 1
             elif event.key == pygame.K_DOWN:
-                ychange = -1
+                testSprite.move(0, -1)
+            if event.key == pygame.K_1:
+                testSprite.rotate(45)
 
         if event.type == pygame.KEYUP:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
-                xchange = 0
+                pass
             if event.key in (pygame.K_UP, pygame.K_DOWN):
-                ychange = 0
-
-    cardX += xchange
-    cardY += -ychange
     gameDis.fill(colors['white'])
     dispText('abc123', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
-    drawCard(cardX, cardY)
     testButton.draw()
     pygame.display.update()
     clock.tick(60)
