@@ -32,7 +32,25 @@ class Button:
         pygame.draw.rect(gameDis, colors[self.buttonColor], (self.posX, self.posY, self.sizeX, self.sizeY))
         dispText(self.text, textX, textY, self.font, textSize, colors[self.fontColor])
 
+class ImageSprite(pygame.sprite.Sprite):
+    def __init__(self, imgName, x = 0, y = 0):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = img.load(str(imgName))
+        self.x = int(x)
+        self.y = int(y)
+
+    def draw(self):
+        gameDis.blit(self.image, (self.x, self.y))
+
+    def move(self, x, y):
+        self.x += int(x)
+        self.y += -int(y)
+
+    def rotate(self, deg):
+        self.image = pygame.transform.rotate(self.image, deg)
+
 testButton = Button('green', 200, 50, 300, 300, 'testButton')
+testSprite = ImageSprite('BasicCard.png', 300, 300)
 
 
 def dispText(msg, textX, textY, font = 'freesansbold.ttf', fontSize = 20, textColor = (0,0,0), bgColor = None):
@@ -48,9 +66,11 @@ while not crashed:
             crashed = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
+                testSprite.move(-1, 0)
             elif event.key == pygame.K_RIGHT:
                 testSprite.move(1, 0)
             if event.key == pygame.K_UP:
+                testSprite.move(0, 1)
             elif event.key == pygame.K_DOWN:
                 testSprite.move(0, -1)
             if event.key == pygame.K_1:
@@ -60,9 +80,11 @@ while not crashed:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 pass
             if event.key in (pygame.K_UP, pygame.K_DOWN):
+                pass
     gameDis.fill(colors['white'])
     dispText('abc123', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
     testButton.draw()
+    testSprite.draw()
     pygame.display.update()
     clock.tick(60)
 
