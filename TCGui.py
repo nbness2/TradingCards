@@ -82,7 +82,7 @@ while not crashed:
             if event.key in (pygame.K_UP, pygame.K_DOWN):
                 pass
     gameDis.fill(colors['white'])
-    dispText('abc123', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
+    dispText('Message', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
     testButton.draw()
     testSprite.draw()
     pygame.display.update()
