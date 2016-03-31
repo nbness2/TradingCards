@@ -1,4 +1,5 @@
 from os import listdir
+from TradingCards import inpConf
 
 def editTheme():
 

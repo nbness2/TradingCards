@@ -1,5 +1,6 @@
 from os.path import exists
 from os import makedirs
+from TradingCards import inpConf, Theme
 
 def createTheme():
 
@@ -51,7 +52,7 @@ def createTheme():
                     break
 
             except:
-                print('Invalid value: {0}'.format(x))
+                print('Invalid value: {0}'.format(tierChance))
                 break
 
         if len(tierNames) == len(tierChances):
