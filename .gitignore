@@ -49,4 +49,5 @@ Temporary Items
 
 # Python junk
 __pycache__
+_server
 *.pyc
