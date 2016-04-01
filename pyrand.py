@@ -13,6 +13,13 @@ def randint(minInt = 0, maxInt = 100, draws = 1):
     return weightchoice(range(minInt, maxInt+1), draws = draws)
 
 
+def randstring(strlen):
+    ostr = ''
+    for char in randint(32,1024,strlen):
+        ostr += chr(char)
+    return ostr
+
+
 def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
 
     global seedTime

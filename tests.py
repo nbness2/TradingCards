@@ -73,6 +73,12 @@ def packTest():
 
             print()
 
+def strTest():
+
+    print('Generating 10 random strings with a length of 15 characters')
+    for x in range(15):
+        print(pyrand.randstring(15, 512))
+
 def testPack(packName, packAmt = 25, printRes = False):
 
     try:
@@ -106,4 +112,4 @@ def testPack(packName, packAmt = 25, printRes = False):
 
 
 if __name__ == '__main__':
-    rngTest()
+    strTest()
