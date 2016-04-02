@@ -108,19 +108,8 @@ class Sha384:
         self._h5 = (self._h5 + f) & 0xffffffffffffffff
         self._h6 = (self._h6 + g) & 0xffffffffffffffff
         self._h7 = (self._h7 + h) & 0xffffffffffffffff
-
-    def hexdigest(self):
-        return ''.join(hex(i)[2:].rjust(16, "0")
-            for i in self._digest())
-
-    def digest(self):
-        hexdigest = self.hexdigest()
-        return bytes(int(hexdigest[i * 2:i * 2 + 2], 16)
-            for i in range(len(hexdigest) // 2))
-
-    def _digest(self):
-        return (self._h0, self._h1, self._h2, self._h3,
-            self._h4, self._h5)
+        self.hexdigest = ''.join(hex(i)[2:].rjust(16, '0') for i in (self._h0, self._h1, self._h2, self._h3, self._h4,
+                                                                     self._h5))
 
 
 
@@ -178,4 +167,4 @@ if __name__ == '__main__':
     print('stdlib md5', md5('meow'.encode()).hexdigest())
     print('purepy md5', Md5('meow').hexdigest)
     print('stdlib sha384', sha384('meow'.encode()).hexdigest())
-    print('purepy sha384', Sha384('meow').hexdigest())
+    print('purepy sha384', Sha384('meow').hexdigest)
