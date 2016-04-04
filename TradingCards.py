@@ -1,17 +1,6 @@
 from os import listdir
 import pyrand
 
-try:
-    from time import perf_counter as pc
-
-except ImportError:
-    from time import clock as pc
-
-except:
-    raise ImportError('Failed to import perf_counter and clock from time module')
-
-
-
 class Card:
     '''
     Base class for all cards
