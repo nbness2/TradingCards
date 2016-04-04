@@ -1,5 +1,5 @@
 from os import listdir
-import pyrand
+from modules import pyrand
 
 class Card:
     '''

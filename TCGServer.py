@@ -1,5 +1,5 @@
-import socketserver, sys
-import rules, pyemail, pyhash, pyrand
+import socketserver, sys, regrules
+from modules import pyrand, pyemail, pyhash
 
 
 HOST = ''
@@ -24,7 +24,7 @@ class UserHandler(socketserver.BaseRequestHandler):
         emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(uname, actCode)
         pyemail.sendEmail(uemail, emessage, 'pyTCG activation code',
                           '', '', 'smtp.email.com')
-        print('email sent')
+        print('email sent to', uemail)
 
 
 

@@ -1,6 +1,5 @@
 import TradingCards as tc
-import pyrand
-
+from modules import pyrand
 
 def runTests():
     rngTest()
