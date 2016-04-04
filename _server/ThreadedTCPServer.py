@@ -20,7 +20,7 @@ class UserHandler(socketserver.BaseRequestHandler):
             uemail = sendRecv(socket, '\nYour activation code will be sent to this email.\nEnter a valid email: ', recvsize= 64)
             if False not in checkupe(uname, upass, uemail):
                 allValid = True
-        actCode = pyhash.Md5(pyrand.randstring(32)).hexdigest()[:8]
+        actCode = pyhash.Md5(pyrand.randstring(8)).hexdigest()[:8]
         emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(uname, actCode)
         pyemail.sendEmail(uemail, emessage, 'pyTCG activation code',
                           '', '', 'smtp.email.com')
