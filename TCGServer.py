@@ -20,19 +20,12 @@ class UserHandler(socketserver.BaseRequestHandler):
         uemail, upass, uname = ('','','')
         paramchecks = {}
         while not allValid:
-            estring = ''
             if len(paramchecks):
-                for param in ['Username', 'Password', 'Email']:
-                    if len(paramchecks[param]):
-                        estring += param+': '
-                    for error in paramchecks[param]:
-                        estring += error+', '
-                    estring = estring[:-2]+'\n'
+                estring = errstr(paramchecks, ['Username', 'Password', 'Email'])
                 sendRecv(socket, estring, 'p', 1)
             uname = sendRecv(socket, 'Min 4 characters, max 16 characters.\nEnter desired username: ', recvsize = 16)
             upass = sendRecv(socket, '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ', recvsize = 32)
             uemail = sendRecv(socket, '\nYour activation code will be sent to this email.\nEnter a valid email: ', recvsize= 64)
-            print()
             paramchecks = checkupe(uname, upass, uemail)
             if type(paramchecks) == bool:
                 allValid = True
@@ -54,6 +47,7 @@ class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     def __init__(self, server_address, RequestHandlerClass):
         socketserver.TCPServer.__init__(self, server_address, RequestHandlerClass)
 
+
 def sendRecv(socket, sendmsg, stype = 'i', recvsize = 64):
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
@@ -65,6 +59,18 @@ def sendRecv(socket, sendmsg, stype = 'i', recvsize = 64):
         recvData = socket.recv(recvsize).decode()[:recvsize]
         return recvData
     socket.recv(recvsize)[:1]
+
+
+def errstr(errdict, paramorder = ()):
+    estring = ''
+    for param in paramorder if len(paramorder) else errdict.keys():
+        if len(errdict[param]):
+            estring += '\n'+param+': '
+        for error in errdict[param]:
+            estring += error+', '
+        estring = estring[:-2]
+    return estring+'\n'
+
 
 def checkupe(username, password, email):
     faults = {'Username' : [], 'Password' : [], 'Email' : []}
