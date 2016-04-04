@@ -24,7 +24,7 @@ def client(host, port):
             elif command == 0x09:
                 break
         s.close()
-    except Exception as e:
+    except:
         s.close()
 
 if __name__ == '__main__':
