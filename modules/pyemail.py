@@ -15,7 +15,6 @@ def sendEmail(sendTo, text, subject, loginName, loginPass, ServerAddr, debug = F
             conn.sendmail(sendTo, sendTo, msg.as_string())
         finally:
             conn.close()
-        sys.exit('Email sent to: {}'.format(sendTo))
     except Exception as exc:
         sys.exit("Mail failed: {}".format(exc))
 
