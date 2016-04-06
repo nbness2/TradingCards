@@ -5,7 +5,6 @@ from modules import pyrand, pyemail, pyhash
 from os import walk
 
 regQueue = Queue()
-regQueueWorker = queueworker(regQueue)
 
 email = emailinfo.email
 emailpass = emailinfo.password
@@ -119,10 +118,9 @@ def readuser(username, userdir = 'users/'):
     username = username+'.usr'
     user = {'activated':None, 'actcode':None, 'passhash':None, 'emailhash':None}
     with open(userdir+username, 'r') as ufile:
-        user['activated'] = bool(ufile.read())
-        user['actcode'] = str(ufile.read())
-        user['passhash'] = str(ufile.read())
-        user['emailhash'] = str(ufile.read())
+        details = [detail.strip() for detail in ufile.readlines()]
+    user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
+    return user
 
 def queueworker(queue):
     while True:
@@ -137,5 +135,6 @@ if __name__ == "__main__":
     server = SimpleServer((HOST, PORT), UserHandler)
     try:
         server.serve_forever()
+        queueworker(regQueue)
     except KeyboardInterrupt:
         sys.exit(0)
