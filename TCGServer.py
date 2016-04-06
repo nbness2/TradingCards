@@ -1,7 +1,11 @@
 import socketserver, sys, regrules
-from modules import pyrand, pyemail, pyhash
 import emailinfo
+from queue import Queue
+from modules import pyrand, pyemail, pyhash
 from os import walk
+
+regQueue = Queue()
+regQueueWorker = queueworker(regQueue)
 
 email = emailinfo.email
 emailpass = emailinfo.password
@@ -18,7 +22,7 @@ class UserHandler(socketserver.BaseRequestHandler):
     def register(self):
         socket = self.request
         allValid = False
-        uemail, upass, uname = ('','','')
+        uemail, upass, uname = ('', '', '')
         paramchecks = {}
         while not allValid:
             if len(paramchecks):
@@ -34,6 +38,7 @@ class UserHandler(socketserver.BaseRequestHandler):
         del upass, paramchecks, allValid, estring
         ehash = pyhash.Sha384(uemail.lower()).hexdigest
         actCode = pyhash.Md5(pyrand.randstring(8)).hexdigest[:8]
+        regQueue.put(writeuser((uname, False, actCode, phash, ehash)))
         emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(uname, actCode)
         pyemail.sendEmail(uemail, emessage, 'pyTCG activation code', email, emailpass, 'smtp.gmail.com')
 
@@ -41,6 +46,7 @@ class UserHandler(socketserver.BaseRequestHandler):
 class TestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         self.request.close
+
 
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     daemon_threads = True
@@ -117,9 +123,19 @@ def readuser(username, userdir = 'users/'):
         user['actcode'] = str(ufile.read())
         user['passhash'] = str(ufile.read())
         user['emailhash'] = str(ufile.read())
+
+def queueworker(queue):
+    while True:
+        try:
+            if not queue.empty():
+                queue.get()
+        except:
+            pass
+
+
 if __name__ == "__main__":
-    echo = SimpleServer((HOST, PORT), UserHandler)
+    server = SimpleServer((HOST, PORT), UserHandler)
     try:
-        echo.serve_forever()
+        server.serve_forever()
     except KeyboardInterrupt:
         sys.exit(0)
