@@ -1,11 +1,16 @@
+
 def checkUsername(username):
+    from TCGServer import readusernames
     #username length between 4 and 16
     #username cannot contain symbols
+    #must not be taken
     faults = []
     if not 4 < len(username) < 16:
         faults.append('too long\short')
     if not username.isalnum():
         faults.append('can only contain alphanumeric characters')
+    if username.lower() in [username.lower() for username in readusernames()]:
+        faults.append('taken')
     return faults
 
 def checkPassword(password):

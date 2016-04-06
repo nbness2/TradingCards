@@ -51,3 +51,4 @@ emailinfo.py
 # Python junk
 __pycache__
 *.pyc
+*.usr
