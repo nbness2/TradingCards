@@ -1,0 +1,4 @@
+Activated (True\False)
+Activation Code
+PasswordHash
+LowercaseEmailHash (for now email will only be used to recover account, so just store hash)
