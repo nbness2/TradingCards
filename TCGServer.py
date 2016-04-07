@@ -1,17 +1,18 @@
 import socketserver, sys, regrules
 import emailinfo
-from queue import Queue
 from modules import pyrand, pyemail, pyhash
+from queue import Queue
+from threading import Thread
 from os import walk
 
-regQueue = Queue()
 
-email = emailinfo.email
-emailpass = emailinfo.password
-smtpaddr = emailinfo.smtp
+class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
 
-HOST = ''
-PORT = 1337
+    def __init__(self, server_address, RequestHandlerClass):
+        socketserver.TCPServer.__init__(self, server_address, RequestHandlerClass)
+
 
 class UserHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -47,12 +48,7 @@ class TestHandler(socketserver.BaseRequestHandler):
         self.request.close
 
 
-class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
-    daemon_threads = True
-    allow_reuse_address = True
 
-    def __init__(self, server_address, RequestHandlerClass):
-        socketserver.TCPServer.__init__(self, server_address, RequestHandlerClass)
 
 
 def sendRecv(socket, sendmsg, stype = 'i', recvsize = 64):
@@ -132,10 +128,25 @@ def queueworker(queue):
         except:
             pass
 
+regQueue = Queue()
+loginQueue = Queue()
+#sessions = {'username':'sessionid'}
+
+email = emailinfo.email
+emailpass = emailinfo.password
+smtpaddr = emailinfo.smtp
+
+HOST = ''
+PORT = 1337
+
 
 if __name__ == "__main__":
     server = SimpleServer((HOST, PORT), UserHandler)
     try:
+        regqworker = QueueWorker(regQueue)
+        #logqworker = QueueWorker(loginQueue)
+        regqworker.start()
+        #logqworker.start()
         server.serve_forever()
         queueworker(regQueue)
     except KeyboardInterrupt:
