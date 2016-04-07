@@ -12,8 +12,7 @@ class Sha384:
         length = bin(len(message) * 8)[2:].rjust(128, "0")
 
         while len(message) > 128:
-            self._handle(''.join(bin(i)[2:].rjust(8, "0")
-                for i in message[:128]))
+            self._handle(''.join(bin(i)[2:].rjust(8, "0") for i in message[:128]))
             message = message[128:]
 
         message = ''.join(bin(i)[2:].rjust(8, "0") for i in message) + "1"
@@ -128,10 +127,3 @@ class Md5:
     def rotleft(self, x, amount):
         x &= 0xFFFFFFFF
         return ((x<<amount) | (x>>(32-amount))) & 0xFFFFFFFF
-
-if __name__ == '__main__':
-    from hashlib import md5, sha384
-    print('stdlib md5', md5('weef'.encode()).hexdigest())
-    print('purepy md5', Md5('weef').hexdigest)
-    print('stdlib sha384', sha384('weef'.encode()).hexdigest())
-    print('purepy sha384', Sha384('weef').hexdigest)
