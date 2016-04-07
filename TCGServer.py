@@ -78,6 +78,19 @@ class SessionContainer(Thread):
         del self.sessions[sessname]
 
 
+class QueueWorker(Thread):
+    def __init__(self, queue):
+        Thread.__init__(self)
+        self.queue = queue
+
+    def run(self):
+        while True:
+            try:
+                if not self.queue.empty():
+                    self.queue.get()
+            except:
+                pass
+
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
     # i, 0x01 = input
@@ -146,13 +159,6 @@ def read_user(username, userdir = 'users/'):
     #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
     return details
 
-def queueworker(queue):
-    while True:
-        try:
-            if not queue.empty():
-                queue.get()
-        except:
-            pass
 
 regQueue = Queue()
 loginQueue = Queue()
