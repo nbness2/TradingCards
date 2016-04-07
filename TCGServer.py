@@ -68,7 +68,7 @@ def sendRecv(socket, sendmsg, stype = 'i', recvsize = 64):
     socket.recv(recvsize)[:1]
 
 
-def errstr(errdict, paramorder = ()):
+def err_str(errdict, paramorder = ()):
     estring = ''
     for param in paramorder if len(paramorder) else errdict.keys():
         if len(errdict[param]):
@@ -79,21 +79,21 @@ def errstr(errdict, paramorder = ()):
     return estring+'\n'
 
 
-def checkupe(username, password, email):
+def check_all(username, password, email):
     faults = {'Username' : [], 'Password' : [], 'Email' : []}
     fullPass = True
 
-    unamec = regrules.checkUsername(username)
-    if len(unamec):
+    usernamec = regrules.check_username(username)
+    if len(usernamec):
         fullPass = False
-        faults['Username'].extend(unamec)
+        faults['Username'].extend(usernamec)
 
-    pwordc = regrules.checkPassword(password)
-    if len(pwordc):
+    passwordc = regrules.check_password(password)
+    if len(passwordc):
         fullPass = False
-        faults['Password'].extend(pwordc)
+        faults['Password'].extend(passwordc)
 
-    emailc = regrules.checkEmail(email)
+    emailc = regrules.check_email(email)
     if type(emailc) != bool:
         fullPass = False
         faults['Email'].append(emailc)
@@ -102,7 +102,8 @@ def checkupe(username, password, email):
         return True
     return faults
 
-def readusernames(dirname = 'users'):
+
+def read_usernames(dirname = 'users'):
     return [username[:-4] for username in walk(dirname).__next__()[2]]
 
 def writeuser(details, userdir = 'users/'):
@@ -114,13 +115,14 @@ def writeuser(details, userdir = 'users/'):
             ufile.write(detail)
     return True
 
-def readuser(username, userdir = 'users/'):
-    username = username+'.usr'
-    user = {'activated':None, 'actcode':None, 'passhash':None, 'emailhash':None}
+
+def read_user(username, userdir = 'users/'):
+    username += '.usr'
+    #user = {'activated':None, 'actcode':None, 'passhash':None, 'emailhash':None}
     with open(userdir+username, 'r') as ufile:
-        details = [detail.strip() for detail in ufile.readlines()]
-    user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
-    return user
+        details = tuple([detail.strip() for detail in ufile.readlines()])
+    #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
+    return details
 
 def queueworker(queue):
     while True:
