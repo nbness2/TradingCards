@@ -128,10 +128,10 @@ def check_all(username, password, email):
 def read_usernames(dirname = 'users'):
     return [username[:-4] for username in walk(dirname).__next__()[2]]
 
-def writeuser(details, userdir = 'users/'):
-    uname = details[0]+'.usr'
-    details = details[1:]
-    with open(userdir+uname, 'w') as ufile:
+
+def write_user(username, details, userdir = 'users/'):
+    username+='.usr'
+    with open(userdir+username, 'w') as ufile:
         for detail in details:
             detail = str(detail)+'\n'
             ufile.write(detail)
