@@ -16,8 +16,25 @@ class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 class UserHandler(socketserver.BaseRequestHandler):
     def handle(self):
-        self.register()
-        self.request.close
+        try:
+            self.register()
+            self.request.close()
+        except:
+            pass
+
+    def login(self):
+        socket = self.request
+        username = send_receive(socket, 'Username: ', recvsize = 16)
+        passhash = pyhash.Md5(send_receive(socket, 'Password: ', recvsize = 32)).hexdigest
+        activated = is_activated(username)
+        while not activated:
+            self.activate()
+
+
+    def activate(self):
+        socket = self.request
+        pass
+
 
     def register(self):
         socket = self.request
@@ -52,6 +69,7 @@ class TestHandler(socketserver.BaseRequestHandler):
 
 
 def sendRecv(socket, sendmsg, stype = 'i', recvsize = 64):
+
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
     # i, 0x01 = input
