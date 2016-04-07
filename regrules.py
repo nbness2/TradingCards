@@ -1,6 +1,6 @@
 
-def checkUsername(username):
-    from TCGServer import readusernames
+def check_username(username):
+    from TCGServer import read_usernames
     #username length between 4 and 16
     #username cannot contain symbols
     #must not be taken
@@ -9,11 +9,11 @@ def checkUsername(username):
         faults.append('too long\short')
     if not username.isalnum():
         faults.append('can only contain alphanumeric characters')
-    if username.lower() in [username.lower() for username in readusernames()]:
+    if username.lower() in [username.lower() for username in read_usernames()]:
         faults.append('taken')
     return faults
 
-def checkPassword(password):
+def check_password(password):
     #password length between 8 and 32
     #password must have at least 1 number and 1 letter
     #password cannot contain symbols
@@ -26,7 +26,7 @@ def checkPassword(password):
         faults.append('must have at least 1 letter and number')
     return faults
 
-def checkEmail(email):
+def check_email(email):
     #must look like an email. If they don't get email it is because they entered wrong.
     if '@' not in email:
         return ('invalid email')
