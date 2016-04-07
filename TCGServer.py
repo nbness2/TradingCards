@@ -39,25 +39,26 @@ class UserHandler(socketserver.BaseRequestHandler):
     def register(self):
         socket = self.request
         allValid = False
-        uemail, upass, uname = ('', '', '')
+        useremail, password, username = ('', '', '')
         paramchecks = {}
         while not allValid:
             if len(paramchecks):
-                estring = errstr(paramchecks, ['Username', 'Password', 'Email'])
-                sendRecv(socket, estring, 'p', 1)
-            uname = sendRecv(socket, 'Min 4 characters, max 16 characters.\nEnter desired username: ', recvsize = 16)
-            upass = sendRecv(socket, '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ', recvsize = 32)
-            uemail = sendRecv(socket, '\nYour activation code will be sent to this email.\nEnter a valid email: ', recvsize = 64)
-            paramchecks = checkupe(uname, upass, uemail)
+                estring = err_str(paramchecks, ['Username', 'Password', 'Email'])
+                send_receive(socket, estring, 'p', 1)
+            username = send_receive(socket, 'Min 4 characters, max 16 characters.\nEnter desired username: ', recvsize = 16)
+            password = send_receive(socket, '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ', recvsize = 32)
+            useremail = send_receive(socket, '\nYour activation code will be sent to this email.\nEnter a valid email: ', recvsize = 64)
+            paramchecks = check_all(username, password, useremail)
             if type(paramchecks) == bool:
                 allValid = True
-                phash = pyhash.Sha384(upass).hexdigest
-        del upass, paramchecks, allValid, estring
-        ehash = pyhash.Sha384(uemail.lower()).hexdigest
-        actCode = pyhash.Md5(pyrand.randstring(8)).hexdigest[:8]
-        regQueue.put(writeuser((uname, False, actCode, phash, ehash)))
-        emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(uname, actCode)
-        pyemail.sendEmail(uemail, emessage, 'pyTCG activation code', email, emailpass, 'smtp.gmail.com')
+        passhash = pyhash.Sha384(password).hexdigest
+        del password, paramchecks, allValid
+        ehash = pyhash.Sha384(useremail.lower()).hexdigest
+        activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
+        regQueue.put(write_user(username, (False, activation_code, passhash, ehash)))
+        emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(username, activation_code)
+        del username, activation_code
+        send_receive(socket, 'Your account has been registered, and an activation code has been sent to your email.', 'p', 0)
 
 
 class TestHandler(socketserver.BaseRequestHandler):
@@ -68,7 +69,6 @@ class TestHandler(socketserver.BaseRequestHandler):
 
 
 
-def sendRecv(socket, sendmsg, stype = 'i', recvsize = 64):
 
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
