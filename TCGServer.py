@@ -57,13 +57,14 @@ class UserHandler(socketserver.BaseRequestHandler):
         activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
         regQueue.put(write_user(username, (False, activation_code, passhash, ehash)))
         emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(username, activation_code)
+        Email(useremail, emessage, 'pyTCG activation code', email, emailpass, 'smtp.gmail.com').start()
         del username, activation_code
         send_receive(socket, 'Your account has been registered, and an activation code has been sent to your email.', 'p', 0)
 
 
 class TestHandler(socketserver.BaseRequestHandler):
     def handle(self):
-        self.request.close
+        self.request.close()
 
 
 class SessionContainer(Thread):
@@ -91,6 +92,19 @@ class QueueWorker(Thread):
             except:
                 pass
 
+class Email(Thread):
+    def __init__(self, sendTo, text, subject, loginName, loginPass, ServerAddr):
+        Thread.__init__(self)
+        self.sendTo, self.subject, self.text = sendTo, subject, text
+        self.loginName, self.loginPass = loginName, loginPass
+        self.ServerAddr = ServerAddr
+
+    def run(self):
+        pyemail.send_email(self.sendTo, self.text, self.subject, self.loginName, self.loginPass, self.ServerAddr)
+
+
+
+def send_receive(socket, sendmsg, stype = 'i', recvsize = 64):
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
     # i, 0x01 = input
@@ -180,6 +194,5 @@ if __name__ == "__main__":
         regqworker.start()
         #logqworker.start()
         server.serve_forever()
-        queueworker(regQueue)
     except KeyboardInterrupt:
         sys.exit(0)
