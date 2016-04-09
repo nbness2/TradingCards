@@ -256,6 +256,9 @@ actQueue = Queue()
 
 #SessionContainer = LoginContainer()
 
+#this is the time you cannot log in after so many attempts
+incloginlimit = 5
+inclogintimeout = 600
 
 email = emailinfo.email
 emailpass = emailinfo.password
