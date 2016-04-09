@@ -85,16 +85,16 @@ class TestHandler(socketserver.BaseRequestHandler):
         self.request.close()
 
 
-class SessionContainer(Thread):
+class LoginContainer(dict, Thread):
     def __init__(self):
+        dict.__init__(self)
         Thread.__init__(self)
-        self.sessions = {}
 
-    def addSession(self, sessname):
-        self.sessions[sessname] = pyhash.Md5(sessname+pyrand.randstring(2))[:16]
+    def add_sess(self, sessname):
+        self[sessname] = pyhash.Md5(sessname+pyrand.randstring(2))[:16]
 
-    def removeSession(self, sessname):
-        del self.sessions[sessname]
+    def del_sess(self, sessname):
+        del self[sessname]
 
 
 class QueueWorker(Thread):
