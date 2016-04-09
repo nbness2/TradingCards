@@ -215,8 +215,8 @@ def check_details(username = None, password = None, email = None):
     return faults
 
 
-def read_usernames(dirname = 'users'):
-    return [username[:-4] for username in walk(dirname).__next__()[2]]
+def read_usernames(userdir = 'users'):
+    return [username[:-4] for username in walk(userdir).__next__()[2]]
 
 
 def write_user(username, details, userdir = 'users/'):
