@@ -15,6 +15,24 @@ class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 class UserHandler(socketserver.BaseRequestHandler):
+    message = {
+             'regusername' : 'Min 4 characters, max 16 characters.\nEnter desired username: ',
+             'regpassword' : '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ',
+             'regemail' : '\nYour activation code will be sent to this email.\nEnter a valid email: ',
+             'actusername' : 'Enter the username of the account you wish to activate: ',
+             'actpassword' : 'Enter the password of the account you wish to activate: ',
+             'actemail' : 'Enter the email you used to register this account: ',
+             'actcode' : 'Enter the activation code found in your email: ',
+             'act_success' : 'Your account has been successfully activated.',
+             'invalid_act' : 'Invalid Username, Password or Activation Code',
+             'not_activated' : 'This account has not been activated yet.',
+             'alreadyact' : 'That account has already been activated. ',
+             'registered' : 'Your account has been registered and an activation code has been sent to your email.',
+             'login_success' : 'Successfully logged in.',
+             'invalid_up' : 'Invalid Username or Password.',
+             'log/act/reg' : '(L)ogin, (A)ctivate, or (R)egister: '
+             }
+
     def handle(self):
         try:
             self.register()
