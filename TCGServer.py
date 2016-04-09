@@ -34,11 +34,20 @@ class UserHandler(socketserver.BaseRequestHandler):
              }
 
     def handle(self):
-        try:
-            self.register()
-            self.request.close()
-        except:
-            pass
+        while True:
+            response = send_receive(self.request, self.message['log/act/reg']).lower()
+            if response == 'l':
+                self.login()
+            elif response == 'a':
+                self.activate()
+            elif response == 'r':
+                self.register()
+            elif response == '~':
+                break
+            else:
+                send_receive(self.request, 'Invalid choice: '+response, 'p')
+        send_receive(self.request, 'Thank you for choosing pyTCG!', 'p')
+        self.request.close()
 
     def login(self):
         socket = self.request
