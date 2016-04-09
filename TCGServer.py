@@ -200,8 +200,8 @@ def read_user(username, userdir = 'users/'):
     #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
     return details
 
-def is_activated(username):
-    if read_user(username)[0]:
+def is_activated(username, userdir = 'users/'):
+    if read_user(username, userdir)[0]:
         return True
     return False
 
