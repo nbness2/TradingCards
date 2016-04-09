@@ -143,8 +143,7 @@ class Email(Thread):
         pyemail.send_email(self.sendTo, self.text, self.subject, self.loginName, self.loginPass, self.ServerAddr)
 
 
-
-def send_receive(socket, sendmsg, stype = 'i', recvsize = 64):
+def send_receive(socket, sendmsg, stype = 'i', recvsize = 1):
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
     # i, 0x01 = input
