@@ -49,7 +49,7 @@ class UserHandler(socketserver.BaseRequestHandler):
             self.activate()
 
 
-    def activate(self):
+    def activate(self, username = None, passhash = None):
         socket = self.request
         if not (username and passhash):
             username = send_receive(socket, self.message['actusername'], recvsize = 16)
