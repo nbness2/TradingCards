@@ -43,11 +43,17 @@ class UserHandler(socketserver.BaseRequestHandler):
     def login(self):
         socket = self.request
         username = send_receive(socket, 'Username: ', recvsize = 16)
-        passhash = pyhash.Md5(send_receive(socket, 'Password: ', recvsize = 32)).hexdigest
-        activated = is_activated(username)
-        while not activated:
-            self.activate()
-
+        passhash = pyhash.Sha384(send_receive(socket, 'Password: ', recvsize = 32)).hexdigest
+        activated, actcode, user_passhash, user_emailhash = read_user(username)
+        activated = int(activated)
+        if passhash == user_passhash:
+            if activated:
+                send_receive(socket, self.message['login_success'], 'p')
+            else:
+                send_receive(socket, self.message['not_activated'], 'p')
+                self.activate(username, passhash)
+        else:
+            send_receive(socket, self.message['invalid_up'], 'p')
 
     def activate(self, username = None, passhash = None):
         socket = self.request
