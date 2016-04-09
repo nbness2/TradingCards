@@ -110,6 +110,7 @@ class QueueWorker(Thread):
             except:
                 pass
 
+
 class Email(Thread):
     def __init__(self, sendTo, text, subject, loginName, loginPass, ServerAddr):
         Thread.__init__(self)
@@ -184,18 +185,17 @@ def read_usernames(dirname = 'users'):
 
 
 def write_user(username, details, userdir = 'users/'):
-    username+='.usr'
-    with open(userdir+username, 'w') as ufile:
+    username += '.usr'
+    with open(userdir+username.lower(), 'w') as ufile:
         for detail in details:
-            detail = str(detail)+'\n'
-            ufile.write(detail)
+            ufile.write(str(detail)+'\n')
     return True
 
 
 def read_user(username, userdir = 'users/'):
     username += '.usr'
     #user = {'activated':None, 'actcode':None, 'passhash':None, 'emailhash':None}
-    with open(userdir+username, 'r') as ufile:
+    with open(userdir+username.lower(), 'r') as ufile:
         details = tuple([detail.strip() for detail in ufile.readlines()])
     #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
     return details
@@ -215,7 +215,6 @@ smtpaddr = emailinfo.smtp
 
 HOST = ''
 PORT = 1337
-
 
 if __name__ == "__main__":
     server = SimpleServer((HOST, PORT), UserHandler)
