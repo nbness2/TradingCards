@@ -146,24 +146,33 @@ def err_str(errdict, paramorder = ()):
     return estring+'\n'
 
 
-def check_all(username, password, email):
+def check_details(username = None, password = None, email = None):
     faults = {'Username' : [], 'Password' : [], 'Email' : []}
     fullPass = True
 
-    usernamec = regrules.check_username(username)
-    if len(usernamec):
-        fullPass = False
-        faults['Username'].extend(usernamec)
+    if not password:
+        passwordc = regrules.check_password(password)
+        del password
+        if len(passwordc):
+            fullPass = False
+            faults['Password'].extend(passwordc)
 
-    passwordc = regrules.check_password(password)
-    if len(passwordc):
-        fullPass = False
-        faults['Password'].extend(passwordc)
+    if not username:
+        usernamec = regrules.check_username(username)
+        if len(usernamec):
+            fullPass = False
+            faults['Username'].extend(usernamec)
 
-    emailc = regrules.check_email(email)
-    if type(emailc) != bool:
+    if username.lower() in read_usernames():
         fullPass = False
-        faults['Email'].append(emailc)
+        faults['Username'].append('taken')
+
+    if not email:
+        emailc = regrules.check_email(email)
+        del email
+        if type(emailc) != bool:
+            fullPass = False
+            faults['Email'].append(emailc)
 
     if fullPass:
         return True
