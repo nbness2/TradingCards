@@ -51,33 +51,51 @@ class UserHandler(socketserver.BaseRequestHandler):
 
     def activate(self):
         socket = self.request
-        pass
+        if not (username and passhash):
+            username = send_receive(socket, self.message['actusername'], recvsize = 16)
+            passhash = pyhash.Sha384(send_receive(socket, self.message['actpassword'], recvsize = 32)).hexdigest
+        user_activated, user_actcode, user_passhash, user_emailhash = read_user(username)
+        user_activated = int(user_activated)
+        del user_emailhash
+        if user_activated:
+            send_receive(socket, self.message['alreadyact'], 'p')
+        else:
+            activation_code = send_receive(socket, self.message['actcode'], recvsize = 8)
+            if passhash == user_passhash and activation_code == user_actcode:
+                actQueue.put(username)
+                send_receive(socket, self.message['act_success'], 'p')
+            else:
+                send_receive(socket, self.message['invalid_act'], 'p')
 
-
-    def register(self):
-        socket = self.request
-        allValid = False
-        useremail, password, username = ('', '', '')
-        paramchecks = {}
-        while not allValid:
-            if len(paramchecks):
-                estring = err_str(paramchecks, ['Username', 'Password', 'Email'])
-                send_receive(socket, estring, 'p', 1)
-            username = send_receive(socket, 'Min 4 characters, max 16 characters.\nEnter desired username: ', recvsize = 16)
-            password = send_receive(socket, '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ', recvsize = 32)
-            useremail = send_receive(socket, '\nYour activation code will be sent to this email.\nEnter a valid email: ', recvsize = 64)
-            paramchecks = check_all(username, password, useremail)
-            if type(paramchecks) == bool:
-                allValid = True
-        passhash = pyhash.Sha384(password).hexdigest
-        del password, paramchecks, allValid
-        ehash = pyhash.Sha384(useremail.lower()).hexdigest
-        activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
-        regQueue.put(write_user(username, (False, activation_code, passhash, ehash)))
-        emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}'.format(username, activation_code)
-        Email(useremail, emessage, 'pyTCG activation code', email, emailpass, 'smtp.gmail.com').start()
-        del username, activation_code
-        send_receive(socket, 'Your account has been registered, and an activation code has been sent to your email.', 'p', 0)
+    def register(self, username = None):
+        try:
+            socket = self.request
+            allValid = False
+            useremail, password, username = ('', '', '')
+            paramchecks = {}
+            while not allValid:
+                if len(paramchecks):
+                    estring = err_str(paramchecks, ['Username', 'Password', 'Email'])
+                    send_receive(socket, estring, 'p', 1)
+                    del estring
+                username = send_receive(socket, self.message['regusername'], recvsize = 16)
+                password = send_receive(socket, self.message['regpassword'], recvsize = 32)
+                useremail = send_receive(socket, self.message['regemail'], recvsize = 64)
+                paramchecks = check_details(username, password, useremail)
+                passhash = pyhash.Sha384(password).hexdigest
+                del password
+                if type(paramchecks) == bool:
+                    allValid = True
+            del paramchecks, allValid
+            ehash = pyhash.Sha384(useremail.lower()).hexdigest
+            activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
+            regQueue.put((username, (0, activation_code, passhash, ehash)))
+            emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
+            Email(useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr).start()
+            del username, activation_code
+            send_receive(socket, self.message['registered'], 'p', 1)
+        except Exception as e:
+            print(e)
 
 
 class TestHandler(socketserver.BaseRequestHandler):
