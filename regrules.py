@@ -9,8 +9,6 @@ def check_username(username):
         faults.append('too long\short')
     if not username.isalnum():
         faults.append('can only contain alphanumeric characters')
-    if username.lower() in [username.lower() for username in read_usernames()]:
-        faults.append('taken')
     return faults
 
 def check_password(password):
