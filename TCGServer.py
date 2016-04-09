@@ -209,8 +209,11 @@ def is_activated(username, userdir = 'users/'):
     return False
 
 regQueue = Queue()
-loginQueue = Queue()
-#sessions = {'username':'sessionid'}
+actQueue = Queue()
+#loginQueue = Queue()
+
+#SessionContainer = LoginContainer()
+
 
 email = emailinfo.email
 emailpass = emailinfo.password
