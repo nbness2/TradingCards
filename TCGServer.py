@@ -208,6 +208,15 @@ def is_activated(username, userdir = 'users/'):
         return True
     return False
 
+def activate_user(username, userdir = 'users/'):
+    user_details = list(read_user(username, userdir))
+    print(user_details)
+    user_details[0] = 1
+    write_user((username, user_details), userdir)
+    return True
+
+
+
 regQueue = Queue()
 actQueue = Queue()
 #loginQueue = Queue()
