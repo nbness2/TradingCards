@@ -219,7 +219,8 @@ def read_usernames(userdir = 'users'):
     return [username[:-4] for username in walk(userdir).__next__()[2]]
 
 
-def write_user(username, details, userdir = 'users/'):
+def write_user(details, userdir = 'users/'):
+    username, details = details
     username += '.usr'
     with open(userdir+username.lower(), 'w') as ufile:
         for detail in details:
