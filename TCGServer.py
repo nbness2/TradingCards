@@ -98,15 +98,18 @@ class LoginContainer(dict, Thread):
 
 
 class QueueWorker(Thread):
-    def __init__(self, queue):
+    def __init__(self, queue, funct):
         Thread.__init__(self)
         self.queue = queue
+        self.funct = funct
 
     def run(self):
         while True:
             try:
                 if not self.queue.empty():
-                    self.queue.get()
+                    parts = self.queue.get()
+                    print(parts)
+                    self.funct(parts)
             except:
                 pass
 
@@ -219,9 +222,11 @@ PORT = 1337
 if __name__ == "__main__":
     server = SimpleServer((HOST, PORT), UserHandler)
     try:
-        regqworker = QueueWorker(regQueue)
+        regqworker = QueueWorker(regQueue, write_user)
+        actqworker = QueueWorker(actQueue, activate_user)
         #logqworker = QueueWorker(loginQueue)
         regqworker.start()
+        actqworker.start()
         #logqworker.start()
         server.serve_forever()
     except KeyboardInterrupt:
