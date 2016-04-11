@@ -170,10 +170,10 @@ def inpConf(inpstr):
 
 
 def readPacks():
-    return {packName : Pack(packName) for packName in listdir('packs')}
+    return {packName : Pack(packName) for packName in listdir('assets/packs')}
 
 def readThemes():
-    return {themeName : Theme(themeName) for themeName in listdir('themes')}
+    return {themeName : Theme(themeName) for themeName in listdir('assets/themes')}
 
 def readTP():
     return readThemes(), readPacks()
