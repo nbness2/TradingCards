@@ -178,22 +178,21 @@ def err_str(errdict, paramorder = ()):
             estring += '\n'+param+': '
         for error in errdict[param]:
             estring += error+', '
-        estring = estring[:-2]
-    return estring+'\n'
+    return estring[:-2]+'\n'
 
 
 def check_details(username = None, password = None, email = None):
     faults = {'Username' : [], 'Password' : [], 'Email' : []}
     fullPass = True
 
-    if not password:
+    if password:
         passwordc = regrules.check_password(password)
         del password
         if len(passwordc):
             fullPass = False
             faults['Password'].extend(passwordc)
 
-    if not username:
+    if username:
         usernamec = regrules.check_username(username)
         if len(usernamec):
             fullPass = False
@@ -201,9 +200,9 @@ def check_details(username = None, password = None, email = None):
 
     if username.lower() in read_usernames():
         fullPass = False
-        faults['Username'].append('taken')
+        faults['Username'].append('username taken')
 
-    if not email:
+    if email:
         emailc = regrules.check_email(email)
         del email
         if type(emailc) != bool:
@@ -243,7 +242,6 @@ def is_activated(username, userdir = 'users/'):
 
 def activate_user(username, userdir = 'users/'):
     user_details = list(read_user(username, userdir))
-    print(user_details)
     user_details[0] = 1
     write_user((username, user_details), userdir)
     return True
