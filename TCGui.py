@@ -50,7 +50,7 @@ class ImageSprite(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, deg)
 
 testButton = Button('green', 200, 50, 300, 300, 'testButton')
-testSprite = ImageSprite('assets/cards/BasicCard.png', 300, 300)
+testSprite = ImageSprite('assets/cardimg/BasicCard.png', 300, 300)
 
 
 def dispText(msg, textX, textY, font = 'freesansbold.ttf', fontSize = 20, textColor = (0,0,0), bgColor = None):
