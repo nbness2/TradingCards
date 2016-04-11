@@ -1,4 +1,4 @@
-import TradingCards as tc
+import TCGMain as tc
 from modules import pyrand
 
 def runTests():
