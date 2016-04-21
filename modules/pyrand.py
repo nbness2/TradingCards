@@ -8,64 +8,65 @@ except ImportError:
     except:
         raise ImportError('Failed to import perf_counter and clock from time module')
 
-def randint(minInt = 0, maxInt = 100, draws = 1):
 
-    return weightchoice(range(minInt, maxInt+1), draws = draws)
+def randint(min_int = 0, max_int = 100, draw_amt = 1):
+
+    return weightchoice(range(min_int, max_int+1), draw_amt = draw_amt)
 
 
 def randstring(strlen):
     ostr = ''
-    for char in randint(32,1024,strlen):
+    for char in randint(32, 1024, strlen):
         ostr += chr(char)
     return ostr
 
 
-def weightchoice(inputList, weightList = None, draws = 1, maxPrecision = 3):
+def weightchoice(input_list, weight_list=None, draw_amt=1, max_precision=3):
 
-    global seedTime
-    popList = []
+    global seed_time
+    pop_list = []
 
     try:
-        draws = int(draws)
+        draw_amt = int(draw_amt)
 
     except:
-        raise TypeError('draws must be convertable to int()')
+        raise TypeError('draw_amt must be convertable to int()')
 
-    if draws < 1:
+    if draw_amt < 1:
         raise ValueError('You can\'t have less than 1 draw')
 
-    if weightList == None:
-        popList = inputList
+    if weight_list == None:
+        pop_list = input_list
 
     else:
-        weightSum = round(sum(weightList), maxPrecision)
+        weight_sum = round(sum(weight_list), max_precision)
 
-        if not len(inputList) == len(weightList):
-            raise ValueError('The length of input list {0} and weight list {1} must be equal'.format(len(inputList),
-                                                                                                     len(weightList)))
-        if not weightSum == 1:
-            raise ValueError('The sum of all weights ({0}) must equal 1'.format(weightSum))
+        if not len(input_list) == len(weight_list):
+            raise ValueError('The length of input list {0} and weight list {1} must be equal'.format(len(input_list),
+                                                                                                     len(weight_list)))
+        if not weight_sum == 1:
+            raise ValueError('The sum of all weights ({0}) must equal 1'.format(weight_sum))
 
-        for inp, weight in zip(inputList, weightList):
+        for inp, weight in zip(input_list, weight_list):
 
-            for i in range(int(weight*(10**maxPrecision))):
-                popList.append(inp)
+            for i in range(int(weight*(10**max_precision))):
+                pop_list.append(inp)
 
-    drawsList = []
+    draws = []
 
-    for x in range(draws):
-        seed = int(seedTime * (2**31)+.3)
-        seedOffset = int(pc()*512-pc()+.3)
-        seedTime = pc() - (seedTimeMod*pc()*x)
-        result = popList[~(int(seedTime*seed)^seedOffset)%len(popList)]
+    for x in range(draw_amt):
+        seed = int(seed_time * (2**31)+.3)
+        seed_offset = int(pc()*512-pc()+.3)
+        seed_time = pc() - (seed_time_mod*pc()*x)
+        result = pop_list[~(int(seed_time*seed)^seed_offset)%len(pop_list)]
 
-        if draws == 1:
+        if draw_amt == 1:
             return result
 
         else:
-            drawsList.append(result)
+            draws.append(result)
 
-    return drawsList
+    return draws
 
-seedTime = pc() * 16
-seedTimeMod = seedTime*2
+seed_time = pc() * 16
+seed_time_mod = seed_time*2

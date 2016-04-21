@@ -1,6 +1,7 @@
 from os import listdir
 from modules import pyrand
 
+
 class Card:
     '''
     Base class for all cards
@@ -10,77 +11,65 @@ class Card:
     cardTheme = Theme
     '''
 
-
     def __init__(self, cardName, cardTier, cardTheme):
         self.cardName = cardName
         self.cardTier = cardTier
         self.cardTheme = cardTheme
 
 
-
 class Theme:
     '''
-    themeName = str
+    theme_name = str
     themeCardNames = tuple (pool of theme-specific card names)
     themeTiers = tuple (pool of theme-specific card tiers)
     themeTierChances = tuple (chances for the corresponding theme tier)
     ~(should be same length as themeTiers)
     '''
 
+    def __init__(self, theme_name):
+        self.theme_name = theme_name
+        self.themeCardNames = self.readcardnames()
+        self.themeTiers = self.readtiernames()
+        self.themeTierChances = self.readtierchances()
 
-    def __init__(self, themeName):
-        self.themeName = themeName
-        self.themeCardNames = self.readCardNames()
-        self.themeTiers = self.readTierNames()
-        self.themeTierChances = self.readTierChances()
+    def readcardnames(self):
+        with open('assets/themes/{0}/cnames.txt'.format(self.theme_name), 'r') as cnfile:
+            cardnames = [x.strip() for x in cnfile.readlines()]
 
+        return tuple(cardnames)
 
-    def readCardNames(self):
-        with open('themes/{0}/cnames.txt'.format(self.themeName), 'r') as cardNames:
-            cardNameList = [x.strip() for x in cardNames.readlines()]
+    def readtiernames(self):
+        with open('assets/themes/{0}/tnames.txt'.format(self.theme_name), 'r') as tnfile:
+            tiernames = [x.strip() for x in tnfile.readlines()]
 
-        return tuple(cardNameList)
+        return tuple(tiernames)
 
+    def readtierchances(self):
+        with open('assets/themes/{0}/tchances.txt'.format(self.theme_name), 'r') as tcfile:
+            tierchances = [float(x) for x in tcfile.readlines()]
 
-    def readTierNames(self):
-        with open('themes/{0}/tnames.txt'.format(self.themeName), 'r') as tierNames:
-            tierNameList = [x.strip() for x in tierNames.readlines()]
+        return tuple(tierchances)
 
-        return tuple(tierNameList)
-
-
-    def readTierChances(self):
-        with open('themes/{0}/tchances.txt'.format(self.themeName), 'r') as tierChances:
-            tierChanceList = [float(x) for x in tierChances.readlines()]
-
-        return tuple(tierChanceList)
-
-
-    def pickTier(self):
+    def pick_tier(self):
         tier = pyrand.weightchoice(self.themeTiers, self.themeTierChances)
         return tier
 
-
-    def pickName(self):
+    def pick_name(self):
         name = pyrand.weightchoice(self.themeCardNames)
         return name
 
+    def make_cards(self, card_amount=1):
 
-    def makeCards(self, cardAmt = 1):
+        card_list = []
 
-        cardList = []
+        for x in range(card_amount):
+            card_list.append(Card(self.pick_name(), self.pick_tier(), self.theme_name))
 
-        for x in range(cardAmt):
-            cardList.append(Card(self.pickName(), self.pickTier(), self.themeName))
-
-        return tuple(cardList)
-
+        return tuple(card_list)
 
     def __bool__(self):
 
         return True
-
-
 
 
 class Pack:
@@ -97,34 +86,32 @@ class Pack:
 
     global themes
 
-    def __init__(self, packName):
-        self.packName = packName
-        self.baseTheme, self.extraTheme = self.readThemes()
-        self.packPrice, self.cardAmt, self.themeCardChance, self.maxThemed = self.readConfigs()
-        self.basicChances = self.readBasicChances()
+    def __init__(self, pack_name):
+        self.pack_name = pack_name
+        self.baseTheme, self.extraTheme = self.readthemes()
+        self.packPrice, self.card_amount, self.themeCardChance, self.maxThemed = self.readconfigs()
+        self.basicChances = self.rbchances()
 
-
-    def openPack(self):
-        packCards = []
-        packCards.extend(themes[self.baseTheme].makeCards(self.cardAmt))
+    def open_pack(self):
+        pack_cards = []
+        pack_cards.extend(themes[self.baseTheme].make_cards(self.card_amount))
 
         for x in range(self.maxThemed):
 
             rand = pyrand.randint()/175
 
             if rand <= self.themeCardChance*1.4:
-                packCards[pyrand.randint(0, len(packCards)-1)] = themes[self.extraTheme].makeCards()[0]
+                pack_cards[pyrand.randint(0, len(pack_cards)-1)] = themes[self.extraTheme].make_cards()[0]
 
-        return tuple(packCards)
+        return tuple(pack_cards)
 
-
-    def readConfigs(self):
+    def readconfigs(self):
         #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
         configs = []
 
-        with open('packs/{0}/pconfigs.txt'.format(self.packName), 'r') as configFile:
+        with open('assets/packs/{0}/pconfigs.txt'.format(self.pack_name), 'r') as cfile:
 
-            for config in configFile:
+            for config in cfile:
                 config = config.strip()
 
                 try:
@@ -135,47 +122,47 @@ class Pack:
 
         return configs
 
-
-    def readBasicChances(self):
+    def rbchances(self):
         bclist = []
-        with open('packs/{0}/basicChances.txt'.format(self.packName), 'r') as bcFile:
+        with open('assets/packs/{0}/basicChances.txt'.format(self.pack_name), 'r') as bcfile:
 
-            for bc in bcFile.readlines():
+            for bc in bcfile.readlines():
                 bclist.append(float(bc.strip()))
 
         return tuple(bclist)
 
+    def readthemes(self):
+        with open('assets/packs/{0}/themes.txt'.format(self.pack_name), 'r') as tfile:
+            tlist = [theme.strip() for theme in tfile]
 
-    def readThemes(self):
-        with open('packs/{0}/themes.txt'.format(self.packName), 'r') as themeFile:
-            themeList = [theme.strip() for theme in themeFile]
-
-        return tuple(themeList)
+        return tuple(tlist)
 
 
-def inpConf(inpstr):
+def input_confirm(inpstr):
     conf = False
     while not conf:
         reply = input(inpstr)
-        confinp = input('Confirm "{0}" Y/N: '.format(reply))[0].lower()
+        confirmed = input('Confirm "{0}" Y/N: '.format(reply))[0].lower()
 
-        if confinp == 'n':
+        if confirmed == 'n':
             conf = False
 
-        elif confinp == 'y':
+        elif confirmed == 'y':
             return str(reply)
 
         else:
             print('Invalid input: {0} . Please try again'.format(reply))
 
 
-def readPacks():
-    return {packName : Pack(packName) for packName in listdir('assets/packs')}
+def read_packs():
+    return {pack_name: Pack(pack_name) for pack_name in listdir('assets/packs')}
 
-def readThemes():
-    return {themeName : Theme(themeName) for themeName in listdir('assets/themes')}
 
-def readTP():
-    return readThemes(), readPacks()
+def read_themes():
+    return {theme_name: Theme(theme_name) for theme_name in listdir('assets/themes')}
 
-themes, packs = readTP()
+
+def read_themes_packs():
+    return read_themes(), read_packs()
+
+themes, packs = read_themes_packs()

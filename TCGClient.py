@@ -1,5 +1,6 @@
 import socket
 
+
 def client(host, port):
     # Talk to server until disconnected.
     try:
@@ -24,6 +25,7 @@ def client(host, port):
             elif command == 0x09:
                 break
         s.close()
+
     except:
         s.close()
 

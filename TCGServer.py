@@ -16,21 +16,21 @@ class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 class UserHandler(socketserver.BaseRequestHandler):
     message = {
-             'regusername' : 'Min 4 characters, max 16 characters.\nEnter desired username: ',
-             'regpassword' : '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ',
-             'regemail' : '\nYour activation code will be sent to this email.\nEnter a valid email: ',
-             'actusername' : 'Enter the username of the account you wish to activate: ',
-             'actpassword' : 'Enter the password of the account you wish to activate: ',
-             'actemail' : 'Enter the email you used to register this account: ',
-             'actcode' : 'Enter the activation code found in your email: ',
-             'act_success' : 'Your account has been successfully activated.',
-             'invalid_act' : 'Invalid Username, Password or Activation Code',
-             'not_activated' : 'This account has not been activated yet.',
-             'alreadyact' : 'That account has already been activated. ',
-             'registered' : 'Your account has been registered and an activation code has been sent to your email.',
-             'login_success' : 'Successfully logged in.',
-             'invalid_up' : 'Invalid Username or Password.',
-             'log/act/reg' : '(L)ogin, (A)ctivate, or (R)egister: '
+             'regusername': 'Min 4 characters, max 16 characters.\nEnter desired username: ',
+             'regpassword': '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ',
+             'regemail': '\nYour activation code will be sent to this email.\nEnter a valid email: ',
+             'actusername': 'Enter the username of the account you wish to activate: ',
+             'actpassword': 'Enter the password of the account you wish to activate: ',
+             'actemail': 'Enter the email you used to register this account: ',
+             'actcode': 'Enter the activation code found in your email: ',
+             'act_success': 'Your account has been successfully activated.',
+             'invalid_act': 'Invalid Username, Password or Activation Code',
+             'not_activated': 'This account has not been activated yet.',
+             'alreadyact': 'That account has already been activated. ',
+             'registered': 'Your account has been registered and an activation code has been sent to your email.',
+             'login_success': 'Successfully logged in.',
+             'invalid_up': 'Invalid Username or Password.',
+             'log/act/reg': '(L)ogin, (A)ctivate, or (R)egister: '
              }
 
     def handle(self):
@@ -64,7 +64,7 @@ class UserHandler(socketserver.BaseRequestHandler):
         else:
             send_receive(socket, self.message['invalid_up'], 'p')
 
-    def activate(self, username = None, passhash = None):
+    def activate(self, username=None, passhash=None):
         socket = self.request
         if not (username and passhash):
             username = send_receive(socket, self.message['actusername'], recvsize = 16)
@@ -77,12 +77,12 @@ class UserHandler(socketserver.BaseRequestHandler):
         else:
             activation_code = send_receive(socket, self.message['actcode'], recvsize = 8)
             if passhash == user_passhash and activation_code == user_actcode:
-                actQueue.put(username)
+                activation_queue.put(username)
                 send_receive(socket, self.message['act_success'], 'p')
             else:
                 send_receive(socket, self.message['invalid_act'], 'p')
 
-    def register(self, username = None):
+    def register(self):
         try:
             socket = self.request
             allValid = False
@@ -104,10 +104,9 @@ class UserHandler(socketserver.BaseRequestHandler):
             del paramchecks, allValid
             ehash = pyhash.Sha384(useremail.lower()).hexdigest
             activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
-            regQueue.put((username, (0, activation_code, passhash, ehash)))
+            register_queue.put((username, (0, activation_code, passhash, ehash)))
             emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
-            Email(useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr).start()
-            del username, activation_code
+            del username, activation_code, passhash, ehash,
             send_receive(socket, self.message['registered'], 'p', 1)
         except Exception as e:
             print(e)
@@ -141,7 +140,6 @@ class QueueWorker(Thread):
             try:
                 if not self.queue.empty():
                     parts = self.queue.get()
-                    print(parts)
                     self.funct(parts)
             except:
                 pass
@@ -158,11 +156,11 @@ class Email(Thread):
         pyemail.send_email(self.sendTo, self.text, self.subject, self.loginName, self.loginPass, self.ServerAddr)
 
 
-def send_receive(socket, sendmsg, stype = 'i', recvsize = 1):
+def send_receive(socket, sendmsg, stype='i', recvsize=1):
     # Sends encoded data + command, returns decoded receive data
     # p, 0x00 = no input
     # i, 0x01 = input
-    commands = {'p' : 0x00, 'i' : 0x01}
+    commands = {'p': 0x00, 'i': 0x01}
     sendData = str(commands[stype])+sendmsg
     socket.send(sendData.encode())
     if stype == 'i':
@@ -171,7 +169,7 @@ def send_receive(socket, sendmsg, stype = 'i', recvsize = 1):
     socket.recv(recvsize)[:1]
 
 
-def err_str(errdict, paramorder = ()):
+def err_str(errdict, paramorder=()):
     estring = ''
     for param in paramorder if len(paramorder) else errdict.keys():
         if len(errdict[param]):
@@ -181,44 +179,44 @@ def err_str(errdict, paramorder = ()):
     return estring[:-2]+'\n'
 
 
-def check_details(username = None, password = None, email = None):
-    faults = {'Username' : [], 'Password' : [], 'Email' : []}
-    fullPass = True
+def check_details(username=None, password=None, email=None):
+    faults = {'Username': [], 'Password': [], 'Email': []}
+    full_pass = True
 
     if password:
         passwordc = regrules.check_password(password)
         del password
         if len(passwordc):
-            fullPass = False
+            full_pass = False
             faults['Password'].extend(passwordc)
 
     if username:
         usernamec = regrules.check_username(username)
         if len(usernamec):
-            fullPass = False
+            full_pass = False
             faults['Username'].extend(usernamec)
 
     if username.lower() in read_usernames():
-        fullPass = False
+        full_pass = False
         faults['Username'].append('username taken')
 
     if email:
         emailc = regrules.check_email(email)
         del email
         if type(emailc) != bool:
-            fullPass = False
+            full_pass = False
             faults['Email'].append(emailc)
 
-    if fullPass:
+    if full_pass:
         return True
     return faults
 
 
-def read_usernames(userdir = 'users'):
+def read_usernames(userdir='users'):
     return [username[:-4] for username in walk(userdir).__next__()[2]]
 
 
-def write_user(details, userdir = 'users/'):
+def write_user(details, userdir='users/'):
     username, details = details
     username += '.usr'
     with open(userdir+username.lower(), 'w') as ufile:
@@ -227,7 +225,7 @@ def write_user(details, userdir = 'users/'):
     return True
 
 
-def read_user(username, userdir = 'users/'):
+def read_user(username, userdir='users/'):
     username += '.usr'
     #user = {'activated':None, 'actcode':None, 'passhash':None, 'emailhash':None}
     with open(userdir+username.lower(), 'r') as ufile:
@@ -235,21 +233,22 @@ def read_user(username, userdir = 'users/'):
     #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
     return details
 
-def is_activated(username, userdir = 'users/'):
+
+def is_activated(username, userdir='users/'):
     if read_user(username, userdir)[0]:
         return True
     return False
 
-def activate_user(username, userdir = 'users/'):
+
+def activate_user(username, userdir='users/'):
     user_details = list(read_user(username, userdir))
     user_details[0] = 1
     write_user((username, user_details), userdir)
     return True
 
 
-
-regQueue = Queue()
-actQueue = Queue()
+register_queue = Queue()
+activation_queue = Queue()
 #loginQueue = Queue()
 
 #SessionContainer = LoginContainer()
@@ -268,12 +267,10 @@ PORT = 1337
 if __name__ == "__main__":
     server = SimpleServer((HOST, PORT), UserHandler)
     try:
-        regqworker = QueueWorker(regQueue, write_user)
-        actqworker = QueueWorker(actQueue, activate_user)
-        #logqworker = QueueWorker(loginQueue)
-        regqworker.start()
-        actqworker.start()
-        #logqworker.start()
+        register_queue_worker = QueueWorker(register_queue, write_user)
+        activation_queue_worker = QueueWorker(activation_queue, activate_user)
+        register_queue_worker.start()
+        activation_queue_worker.start()
         server.serve_forever()
     except KeyboardInterrupt:
         sys.exit(0)
