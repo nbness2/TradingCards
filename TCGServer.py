@@ -252,6 +252,7 @@ def activate_user(username, userdir='users/'):
 
 register_queue = Queue()
 activation_queue = Queue()
+email_queue = Queue()
 #loginQueue = Queue()
 
 #SessionContainer = LoginContainer()
