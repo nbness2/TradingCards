@@ -106,6 +106,8 @@ class UserHandler(socketserver.BaseRequestHandler):
             activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
             register_queue.put((username, (0, activation_code, passhash, ehash)))
             emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
+            email_params = (useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr, False)
+            email_queue.put(email_params)
             del username, activation_code, passhash, ehash,
             send_receive(socket, self.message['registered'], 'p', 1)
         except Exception as e:
@@ -145,7 +147,7 @@ class QueueWorker(Thread):
                 pass
 
 
-class Email(Thread):
+'''class Email(Thread):
     def __init__(self, sendTo, text, subject, loginName, loginPass, ServerAddr):
         Thread.__init__(self)
         self.sendTo, self.subject, self.text = sendTo, subject, text
@@ -154,6 +156,7 @@ class Email(Thread):
 
     def run(self):
         pyemail.send_email(self.sendTo, self.text, self.subject, self.loginName, self.loginPass, self.ServerAddr)
+'''
 
 
 def send_receive(socket, sendmsg, stype='i', recvsize=1):
@@ -269,8 +272,10 @@ if __name__ == "__main__":
     try:
         register_queue_worker = QueueWorker(register_queue, write_user)
         activation_queue_worker = QueueWorker(activation_queue, activate_user)
+        email_queue_worker = QueueWorker(email_queue, pyemail.send_email)
         register_queue_worker.start()
         activation_queue_worker.start()
+        email_queue_worker.start()
         server.serve_forever()
     except KeyboardInterrupt:
         sys.exit(0)

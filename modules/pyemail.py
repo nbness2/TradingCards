@@ -2,8 +2,8 @@ from smtplib import SMTP_SSL as SMTP
 from email.mime.text import MIMEText
 
 
-def send_email(sendTo, text, subject, loginName, loginPass, ServerAddr, debug = False):
-    msg = MIMEText(text, 'plain')
+def send_email(params):
+    send_to, message_body, subject, login_name, login_pass, server_addr, debug = params
     msg = MIMEText(message_body, 'plain')
     msg['Subject'] = str(subject)
     msg['To'] = str(send_to)
