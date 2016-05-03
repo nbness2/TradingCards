@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, path
 from modules import pyrand
 
 
@@ -6,31 +6,31 @@ class Card:
     '''
     Base class for all cards
     These are values that are assumed to be correct to work correctly
-    cardName = str
-    cardTier = int
-    cardTheme = Theme
+    card_name = str
+    card_tier = int
+    card_theme = Theme
     '''
 
-    def __init__(self, cardName, cardTier, cardTheme):
-        self.cardName = cardName
-        self.cardTier = cardTier
-        self.cardTheme = cardTheme
+    def __init__(self, card_name, card_tier, card_theme):
+        self.card_name = card_name
+        self.card_tier = card_tier
+        self.card_theme = card_theme
 
 
 class Theme:
     '''
     theme_name = str
-    themeCardNames = tuple (pool of theme-specific card names)
-    themeTiers = tuple (pool of theme-specific card tiers)
-    themeTierChances = tuple (chances for the corresponding theme tier)
-    ~(should be same length as themeTiers)
+    theme_card_names = tuple (pool of theme-specific card names)
+    theme_tiers = tuple (pool of theme-specific card tiers)
+    theme_tier_chances = tuple (chances for the corresponding theme tier)
+    ~(should be same length as theme_tiers)
     '''
 
     def __init__(self, theme_name):
         self.theme_name = theme_name
-        self.themeCardNames = self.readcardnames()
-        self.themeTiers = self.readtiernames()
-        self.themeTierChances = self.readtierchances()
+        self.theme_card_names = self.readcardnames()
+        self.theme_tiers = self.readtiernames()
+        self.theme_tier_chances = self.readtierchances()
 
     def readcardnames(self):
         with open('assets/themes/{0}/cnames.txt'.format(self.theme_name), 'r') as cnfile:
@@ -51,11 +51,11 @@ class Theme:
         return tuple(tierchances)
 
     def pick_tier(self):
-        tier = pyrand.weightchoice(self.themeTiers, self.themeTierChances)
+        tier = pyrand.weightchoice(self.theme_tiers, self.theme_tier_chances)
         return tier
 
     def pick_name(self):
-        name = pyrand.weightchoice(self.themeCardNames)
+        name = pyrand.weightchoice(self.theme_card_names)
         return name
 
     def make_cards(self, card_amount=1):
@@ -76,11 +76,11 @@ class Pack:
     """
     Base class for all packs
     These are values that are assumed to be correct to work correctly
-    packPrice = int (0->X)
+    pack_price = int (0->X)
     cardsInPack = int (1->X)
-    cardTierChances = None/tuple (lowest rarity -> highest rarity)(add up to 1)
+    card_tier_chances = None/tuple (lowest rarity -> highest rarity)(add up to 1)
     ~corresponds to the basic theme, set to 0 for no chance of that tier
-    themeCardChance = None/int (0->1) - chance to replace 1 card in your pack with a themed card
+    theme_card_chance = None/int (0->1) - chance to replace 1 card in your pack with a themed card
     packTheme = None/Theme (this is an extra theme in addition to the default basic theme)
     """
 
@@ -88,25 +88,25 @@ class Pack:
 
     def __init__(self, pack_name):
         self.pack_name = pack_name
-        self.baseTheme, self.extraTheme = self.readthemes()
-        self.packPrice, self.card_amount, self.themeCardChance, self.maxThemed = self.readconfigs()
+        self.base_theme, self.extra_theme = self.readthemes()
+        self.pack_price, self.card_amount, self.theme_card_chance, self.max_themed = self.readconfigs()
         self.basicChances = self.rbchances()
 
     def open_pack(self):
         pack_cards = []
-        pack_cards.extend(themes[self.baseTheme].make_cards(self.card_amount))
+        pack_cards.extend(themes[self.base_theme].make_cards(self.card_amount))
 
-        for x in range(self.maxThemed):
+        for x in range(self.max_themed):
 
             rand = pyrand.randint()/175
 
-            if rand <= self.themeCardChance*1.4:
-                pack_cards[pyrand.randint(0, len(pack_cards)-1)] = themes[self.extraTheme].make_cards()[0]
+            if rand <= self.theme_card_chance*1.4:
+                pack_cards[pyrand.randint(0, len(pack_cards)-1)] = themes[self.extra_theme].make_cards()[0]
 
         return tuple(pack_cards)
 
     def readconfigs(self):
-        #[packPrice, packCardAmt, themeCardChance, maxThemeCards]
+        #[pack_price, packCardAmt, theme_card_chance, maxThemeCards]
         configs = []
 
         with open('assets/packs/{0}/pconfigs.txt'.format(self.pack_name), 'r') as cfile:
@@ -143,23 +143,20 @@ def input_confirm(inpstr):
     while not conf:
         reply = input(inpstr)
         confirmed = input('Confirm "{0}" Y/N: '.format(reply))[0].lower()
-
         if confirmed == 'n':
             conf = False
-
         elif confirmed == 'y':
             return str(reply)
-
         else:
             print('Invalid input: {0} . Please try again'.format(reply))
 
 
 def read_packs():
-    return {pack_name: Pack(pack_name) for pack_name in listdir('assets/packs')}
+    return {pack_name: Pack(pack_name) for pack_name in listdir('assets/packs/')}
 
 
 def read_themes():
-    return {theme_name: Theme(theme_name) for theme_name in listdir('assets/themes')}
+    return {theme_name: Theme(theme_name) for theme_name in listdir('assets/themes/')}
 
 
 def read_themes_packs():
