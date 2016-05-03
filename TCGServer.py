@@ -1,5 +1,5 @@
 import sys, time, socketserver
-import emailinfo, regrules
+import emailinfo, regrules, TCGMain
 from modules import pyrand, pyemail, pyhash
 from queue import Queue
 from threading import Thread
