@@ -5,13 +5,12 @@ from queue import Queue
 from threading import Thread
 from os import walk
 
-
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, server_address, RequestHandlerClass):
-        socketserver.TCPServer.__init__(self, server_address, RequestHandlerClass)
+    def __init__(self, server_address, request_handler):
+        socketserver.TCPServer.__init__(self, server_address, request_handler)
 
 
 class UserHandler(socketserver.BaseRequestHandler):
@@ -51,8 +50,8 @@ class UserHandler(socketserver.BaseRequestHandler):
 
     def login(self):
         socket = self.request
-        username = send_receive(socket, 'Username: ', recvsize = 16)
-        passhash = pyhash.Sha384(send_receive(socket, 'Password: ', recvsize = 32)).hexdigest
+        username = send_receive(socket, 'Username: ', recvsize=16)
+        passhash = pyhash.Sha384(send_receive(socket, 'Password: ', recvsize=32)).hexdigest
         activated, actcode, user_passhash, user_emailhash = read_user(username)
         activated = int(activated)
         if passhash == user_passhash:
@@ -67,15 +66,15 @@ class UserHandler(socketserver.BaseRequestHandler):
     def activate(self, username=None, passhash=None):
         socket = self.request
         if not (username and passhash):
-            username = send_receive(socket, self.message['actusername'], recvsize = 16)
-            passhash = pyhash.Sha384(send_receive(socket, self.message['actpassword'], recvsize = 32)).hexdigest
+            username = send_receive(socket, self.message['actusername'], recvsize=16)
+            passhash = pyhash.Sha384(send_receive(socket, self.message['actpassword'], recvsize=32)).hexdigest
         user_activated, user_actcode, user_passhash, user_emailhash = read_user(username)
         user_activated = int(user_activated)
         del user_emailhash
         if user_activated:
             send_receive(socket, self.message['alreadyact'], 'p')
         else:
-            activation_code = send_receive(socket, self.message['actcode'], recvsize = 8)
+            activation_code = send_receive(socket, self.message['actcode'], recvsize=8)
             if passhash == user_passhash and activation_code == user_actcode:
                 activation_queue.put(username)
                 send_receive(socket, self.message['act_success'], 'p')
@@ -85,23 +84,23 @@ class UserHandler(socketserver.BaseRequestHandler):
     def register(self):
         try:
             socket = self.request
-            allValid = False
+            passed = False
             useremail, password, username = ('', '', '')
             paramchecks = {}
-            while not allValid:
+            while not passed:
                 if len(paramchecks):
                     estring = err_str(paramchecks, ['Username', 'Password', 'Email'])
                     send_receive(socket, estring, 'p', 1)
                     del estring
-                username = send_receive(socket, self.message['regusername'], recvsize = 16)
-                password = send_receive(socket, self.message['regpassword'], recvsize = 32)
-                useremail = send_receive(socket, self.message['regemail'], recvsize = 64)
+                username = send_receive(socket, self.message['regusername'], recvsize=16)
+                password = send_receive(socket, self.message['regpassword'], recvsize=32)
+                useremail = send_receive(socket, self.message['regemail'], recvsize=64)
                 paramchecks = check_details(username, password, useremail)
                 passhash = pyhash.Sha384(password).hexdigest
                 del password
                 if type(paramchecks) == bool:
-                    allValid = True
-            del paramchecks, allValid
+                    passed = True
+            del paramchecks, passed
             ehash = pyhash.Sha384(useremail.lower()).hexdigest
             activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
             register_queue.put((username, (0, activation_code, passhash, ehash)))
@@ -114,14 +113,8 @@ class UserHandler(socketserver.BaseRequestHandler):
             print(e)
 
 
-class TestHandler(socketserver.BaseRequestHandler):
-    def handle(self):
-        self.request.close()
-
-
-class LoginContainer(dict, Thread):
+class LoginContainer(Thread):
     def __init__(self):
-        dict.__init__(self)
         Thread.__init__(self)
 
     def add_sess(self, sessname):
@@ -144,19 +137,7 @@ class QueueWorker(Thread):
                     parts = self.queue.get()
                     self.funct(parts)
             except:
-                pass
-
-
-'''class Email(Thread):
-    def __init__(self, sendTo, text, subject, loginName, loginPass, ServerAddr):
-        Thread.__init__(self)
-        self.sendTo, self.subject, self.text = sendTo, subject, text
-        self.loginName, self.loginPass = loginName, loginPass
-        self.ServerAddr = ServerAddr
-
-    def run(self):
-        pyemail.send_email(self.sendTo, self.text, self.subject, self.loginName, self.loginPass, self.ServerAddr)
-'''
+                self.queue.put(parts)
 
 
 def send_receive(socket, sendmsg, stype='i', recvsize=1):
@@ -230,7 +211,6 @@ def write_user(details, userdir='users/'):
 
 def read_user(username, userdir='users/'):
     username += '.usr'
-    #user = {'activated':None, 'actcode':None, 'passhash':None, 'emailhash':None}
     with open(userdir+username.lower(), 'r') as ufile:
         details = tuple([detail.strip() for detail in ufile.readlines()])
     #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
