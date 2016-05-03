@@ -87,13 +87,13 @@ class Md5:
     consts = [int(abs(math.sin(i+1)) * 2**32) & 0xFFFFFFFF for i in range(64)]
     inits = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]
     functs = 16*[lambda b, c, d: (b & c) | (~b & d)] + \
-             16*[lambda b, c, d: (d & b) | (~d & c)] + \
-             16*[lambda b, c, d: b ^ c ^ d] + \
-             16*[lambda b, c, d: c ^ (b | ~d)]
+        16*[lambda b, c, d: (d & b) | (~d & c)] + \
+        16*[lambda b, c, d: b ^ c ^ d] + \
+        16*[lambda b, c, d: c ^ (b | ~d)]
     idxfuncts = 16*[lambda i: i] + \
-                16*[lambda i: (5*i + 1)%16] + \
-                16*[lambda i: (3*i + 5)%16] + \
-                16*[lambda i: (7*i)%16]
+        16*[lambda i: (5*i + 1)%16] + \
+        16*[lambda i: (3*i + 5)%16] + \
+        16*[lambda i: (7*i)%16]
 
     def __init__(self, message):
         message = bytearray(message.encode())
@@ -127,3 +127,4 @@ class Md5:
     def rotleft(self, x, amount):
         x &= 0xFFFFFFFF
         return ((x<<amount) | (x>>(32-amount))) & 0xFFFFFFFF
+
