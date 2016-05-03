@@ -90,17 +90,15 @@ class Pack:
         self.pack_name = pack_name
         self.base_theme, self.extra_theme = self.readthemes()
         self.pack_price, self.card_amount, self.theme_card_chance, self.max_themed = self.readconfigs()
-        self.basicChances = self.rbchances()
+        self.basic_chaces = self.rbchances()
 
     def open_pack(self):
         pack_cards = []
         pack_cards.extend(themes[self.base_theme].make_cards(self.card_amount))
 
         for x in range(self.max_themed):
-
-            rand = pyrand.randint()/175
-
-            if rand <= self.theme_card_chance*1.4:
+            rand = pyrand.randint(1, 100)/100
+            if rand <= self.theme_card_chance:
                 pack_cards[pyrand.randint(0, len(pack_cards)-1)] = themes[self.extra_theme].make_cards()[0]
 
         return tuple(pack_cards)
@@ -113,10 +111,8 @@ class Pack:
 
             for config in cfile:
                 config = config.strip()
-
                 try:
                     configs.append(int(config))
-
                 except ValueError:
                     configs.append(float(config))
 
