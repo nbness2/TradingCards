@@ -3,9 +3,9 @@ from modules import pyrand
 
 
 def runtests():
-    rngtest()
-    packtest()
-    openpacktest('Expert Booster', print_res=True)
+    #rngtest()
+    #packtest()
+    openpacktest('Quacker Booster', print_res=True)
 
 
 def rngtest():
@@ -74,7 +74,7 @@ def strtest():
         print(pyrand.randstring(15))
 
 
-def openpacktest(pack_name, pack_amt=25, print_res=False):
+def openpacktest(pack_name, pack_amt=100, print_res=False):
     try:
         pack = tc.packs[pack_name]
     except:
@@ -93,8 +93,10 @@ def openpacktest(pack_name, pack_amt=25, print_res=False):
     del card_list
     tccp = round(tcc/tca*100, 4)
     if print_res:
+        print('Opened', pack_amt, pack_name, 'packs (', pack.card_amount, 'cards each, max', pack.max_themed,
+              'themed cards per pack ) whose themed card chance is', pack.theme_card_chance*100, '%')
         print(tcc, 'out of', tca, 'cards were themed giving a total of', tccp, '% themed cards')
-        print('optimal themed cards is', tca*pack.theme_card_chance)
+        print('perfect world themed cards amount is', pack_amt * pack.max_themed)
 
     return tcc, tccp
 
