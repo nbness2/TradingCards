@@ -5,6 +5,7 @@ from queue import Queue
 from threading import Thread
 from os import walk
 
+
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     daemon_threads = True
     allow_reuse_address = True
@@ -241,9 +242,7 @@ email_queue = Queue()
 incloginlimit = 5
 inclogintimeout = 600
 
-email = emailinfo.email
-emailpass = emailinfo.password
-smtpaddr = emailinfo.smtp
+email, emailpass, smtpaddr = emailinfo.info
 
 HOST = ''
 PORT = 1337
