@@ -77,7 +77,7 @@ class UserHandler(socketserver.BaseRequestHandler):
         else:
             activation_code = send_receive(socket, self.message['actcode'], recvsize=8)
             if passhash == user_passhash and activation_code == user_actcode:
-                queues['activation'].put(username)
+                queues['activation'][0].put(username)
                 send_receive(socket, self.message['act_success'], 'p')
             else:
                 send_receive(socket, self.message['invalid_act'], 'p')
@@ -104,10 +104,10 @@ class UserHandler(socketserver.BaseRequestHandler):
             del paramchecks, passed
             ehash = pyhash.Sha384(useremail.lower()).hexdigest
             activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
-            queues['register'].put((username, (0, activation_code, passhash, ehash)))
+            queues['register'][0].put((username, (0, activation_code, passhash, ehash)))
             emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
             email_params = (useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr, False)
-            queues['email'].put(email_params)
+            queues['email'][0].put(email_params)
             del username, activation_code, passhash, ehash,
             send_receive(socket, self.message['registered'], 'p', 1)
         except Exception as e:
@@ -131,10 +131,9 @@ class Session:
 
 
 class QueueWorker(Thread):
-    def __init__(self, queue, funct):
+    def __init__(self, params):
         Thread.__init__(self)
-        self.queue = queue
-        self.funct = funct
+        self.queue, self.funct = params
 
     def run(self):
         while True:
@@ -247,16 +246,12 @@ HOST = ''
 PORT = 1337
 
 queues = {
-    'register': Queue(),
-    'activation': Queue(),
-    'email': Queue(),
+    'register': [Queue(), write_user],
+    'activation': [Queue(), activate_user],
+    'email': [Queue(), pyemail.send_email],
     }
 
-workers = {
-    'register': QueueWorker(queues['register'], write_user),
-    'activation': QueueWorker(queues['activation'], activate_user),
-    'email': QueueWorker(queues['email'], pyemail.send_email)
-    }
+workers = {queue: QueueWorker(queues[queue]) for queue in queues}
 
 if __name__ == "__main__":
     server = SimpleServer((HOST, PORT), UserHandler)
