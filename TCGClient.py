@@ -21,7 +21,7 @@ def client(host, port):
                     message = input(data)
                     if len(message):
                         valid = True
-                s.send(message.encode())
+                s.send(message[:32].encode())
             elif command == 0x09:
                 break
         s.close()

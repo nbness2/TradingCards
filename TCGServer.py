@@ -153,9 +153,9 @@ def send_receive(socket, sendmsg, stype='i', recvsize=1):
     sendData = str(commands[stype])+sendmsg
     socket.send(sendData.encode())
     if stype == 'i':
-        recvData = socket.recv(recvsize).decode()[:recvsize]
+        recvData = socket.recv(64).decode()[:recvsize]
         return recvData
-    socket.recv(recvsize)[:1]
+    socket.recv(64)[:1]
 
 
 def err_str(errdict, paramorder=()):
