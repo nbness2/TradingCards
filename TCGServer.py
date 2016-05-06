@@ -17,7 +17,7 @@ class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 class UserHandler(socketserver.BaseRequestHandler):
     message = {
              'regusername': 'Min 4 characters, max 16 characters.\nEnter desired username: ',
-             'regpassword': '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot symbols.\nEnter password: ',
+             'regpassword': '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot contain symbols.\nEnter password: ',
              'regemail': '\nYour activation code will be sent to this email.\nEnter a valid email: ',
              'actusername': 'Enter the username of the account you wish to activate: ',
              'actpassword': 'Enter the password of the account you wish to activate: ',
@@ -150,11 +150,11 @@ def send_receive(socket, sendmsg, stype='i', recvsize=1):
     # p, 0x00 = no input
     # i, 0x01 = input
     commands = {'p': 0x00, 'i': 0x01}
-    sendData = str(commands[stype])+sendmsg
-    socket.send(sendData.encode())
+    send_data = str(commands[stype])+sendmsg
+    socket.send(send_data.encode())
     if stype == 'i':
-        recvData = socket.recv(64).decode()[:recvsize]
-        return recvData
+        recv_data = socket.recv(64).decode()[:recvsize]
+        return recv_data
     socket.recv(64)[:1]
 
 
@@ -233,8 +233,6 @@ def activate_user(username, userdir='users/'):
     user_details[0] = 1
     write_user((username, user_details), userdir)
     return True
-
-#loginQueue = Queue()
 
 #this is the time you cannot log in after so many attempts
 incloginlimit = 5
