@@ -1,20 +1,23 @@
 
 
 class Queue:
-    def __init__(self, qtype='l', maxsize=0):
+    def __init__(self, qtype='f', maxsize=None):
         if qtype.lower()[0] in 'lf':
             self.qtype = qtype
         else:
             raise TypeError('qtype must be (l) or (f)')
-        if maxsize < 0:
-            self.maxsize = 0
-        else:
+        if maxsize:
             self.maxsize = maxsize
+        else:
+            self.maxsize = 0
         self.queue = []
+
+    def __len__(self):
+        return len(self.queue)
 
     def put(self, item):
         if self.maxsize > 0:
-            if len(self.queue) == self.maxsize:
+            if self.full():
                 raise ValueError('Queue is full')
         self.queue.append(item)
 
@@ -28,3 +31,6 @@ class Queue:
 
     def empty(self):
         return not bool(self.queue)
+
+    def full(self):
+        return len(self) == self.maxsize

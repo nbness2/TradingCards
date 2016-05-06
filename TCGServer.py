@@ -1,6 +1,7 @@
 import sys, time, socketserver
 import emailinfo, regrules, TCGMain
-from modules import pyrand, pyemail, pyhash, pyqueue
+from modules import pyrand, pyemail, pyhash
+from modules.pyqueue import Queue
 from threading import Thread
 from os import walk
 
@@ -243,10 +244,12 @@ HOST = ''
 PORT = 1337
 
 queues = {
-    'register': [Queue(), write_user],
-    'activation': [Queue(), activate_user],
-    'email': [Queue(), pyemail.send_email],
+    'register': [Queue(qtype='l'), write_user],
+    'activation': [Queue(qtype='l'), activate_user],
+    'email': [Queue(qtype='l'), pyemail.send_email],
     }
+
+meow = True
 
 workers = {queue: QueueWorker(queues[queue]) for queue in queues}
 
