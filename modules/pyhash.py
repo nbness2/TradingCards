@@ -127,4 +127,3 @@ class Md5:
     def rotleft(self, x, amount):
         x &= 0xFFFFFFFF
         return ((x<<amount) | (x>>(32-amount))) & 0xFFFFFFFF
-

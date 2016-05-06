@@ -1,11 +1,11 @@
 import socket
 
 
-def client(host, port):
+def client(shost, sport):
     # Talk to server until disconnected.
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
+        s.connect((shost, sport))
         while True:
             reply = s.recv(256).decode()[:256]
             if len(reply) == 0:
