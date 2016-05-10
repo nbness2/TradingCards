@@ -32,5 +32,5 @@ class Queue:
     def empty(self):
         return not bool(self.queue)
 
-    def full(self):
-        return len(self) == self.maxsize
+    def isfull(self):
+        return len(self) == self.maxsize if self.maxsize <= 0 else False
