@@ -1,3 +1,45 @@
+class DLL(object):
+    start = None
+    end = None
+
+    def append(self, data):
+        new_ref = {'data': data, 'last': None, 'next': None}
+        if self.start is None:
+            self.start = self.end = new_ref
+        else:
+            new_ref['last'] = self.end
+            new_ref['next'] = None
+            self.end['next'] = new_ref
+            self.end = new_ref
+
+    def remove(self, value):
+        removes = []
+        removes.extend(value)
+        for value in removes:
+            cur_ref = self.start
+            while cur_ref is not None:
+                if cur_ref['data'] == value:
+                    if cur_ref['last'] is not None:
+                        cur_ref['last']['next'] = cur_ref['next']
+                        cur_ref['next']['last'] = cur_ref['last']
+                    else:
+                        self.start = cur_ref['next']
+                        cur_ref['next']['last'] = None
+                cur_ref = cur_ref['next']
+
+    def show(self):
+        cur_ref = self.start
+        while cur_ref is not None:
+            print(cur_ref['last']['data'] if cur_ref['last'] != None else None,
+                  cur_ref['data'],
+                  cur_ref['next']['data'] if cur_ref['next'] != None else None)
+            cur_ref = cur_ref['next']
+
+DEList = DLL()
+for x in range(10):
+    DEList.append(x)
+DEList.remove([1, 7, 3, 8, 'a'])
+DEList.show()
 
 
 class Queue:
