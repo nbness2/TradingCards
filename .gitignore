@@ -53,3 +53,4 @@ emailinfo.py
 __pycache__
 *.pyc
 *.usr
+modules/pyqueue2.py
