@@ -34,3 +34,7 @@ class Queue:
 
     def isfull(self):
         return len(self) == self.maxsize if self.maxsize <= 0 else False
+
+class DEQueue(Queue):
+    def __init__(self, maxsize=None):
+        pass
