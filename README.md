@@ -15,32 +15,35 @@ These are the files and what they do
 ### Trading Card Game Structure.txt
 This was just a quick idea I came up with at work while it was slow, but it gave me something to base my code on.
 
-### TradingCards.py
+### TCGMain.py
 This is the main file. This has all the classes (Card, Pack, Theme) and important code in it.
 
-### edit.py and create.py
-Holds the functions that let you edit\create packs\themes
+### TCGServer.py
+Threaded TCP Server that handles incoming connections from clients. Also holds the functions to register\activate users.
 
-### tests.py
+### TCGTests.py
 This holds the tests for testing that all the stuff works correctly
 
 ### TCGui.py
 This is the testing GUI. As of now, it doesn't really work... :'( I'll get there one day.
 
-### pyrand.py
-This is the random number and string generator that I created so I didn't have to import any libraries like numpy.random or stdlib.random. It works as expected.
+### edit.py and create.py
+Holds the functions that let you edit\create packs\themes
 
-### _server
-This file contains things that I'll be using for my server.
+### regrules.py
+Contains the rules for having a valid username\password\email for registration
 
-### ThreadedTCPServer.py
-My threaded TCP server that will handle the connections from clients.
+## modules
+Modules that I wrote to aid me.
 
-### pyhash.py
-My pure python MD5, and a pure python SHA384 (https://github.com/sfstpala/SlowSHA/blob/master/slowsha.py)
-
-### pyemail.py
+#### pyemail.py
 Gives me an easy lazy way to send simple emails to email addresses\phone numbers.
 
-### rules.py
-Contains the rules for having a valid username\password\email for registration
+#### pyhash.py
+My pure python implementation MD5, and a more condensed and clean pure python implementation of SHA384 (https://github.com/sfstpala/SlowSHA/blob/master/slowsha.py)
+
+#### pyrand.py
+My pure python implementation of some random generator functions.
+
+#### pyqueue
+My pure python implementation of Queues and DEQueues
