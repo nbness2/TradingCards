@@ -1,10 +1,11 @@
 import socket
 
-def client(host, port):
+
+def client(shost, sport):
     # Talk to server until disconnected.
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
+        s.connect((shost, sport))
         while True:
             reply = s.recv(256).decode()[:256]
             if len(reply) == 0:
@@ -20,11 +21,12 @@ def client(host, port):
                     message = input(data)
                     if len(message):
                         valid = True
-                s.send(message.encode())
+                s.send(message[:32].encode())
             elif command == 0x09:
                 break
         s.close()
-    except Exception as e:
+
+    except:
         s.close()
 
 if __name__ == '__main__':

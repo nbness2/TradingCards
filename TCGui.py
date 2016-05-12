@@ -5,8 +5,8 @@ clock = pygame.time.Clock()
 crashed = False
 img = pygame.image
 
-colors = {'black' : (0,0,0), 'white' : (255,255,255), 'red' : (255,0,0), 'green' : (0,255,0), 'blue' : (0,0,255),
-          'purple' : (255,0,255), 'yellow' : (255,255,0)}
+colors = {'black': (0, 0, 0), 'white': (255, 255, 255), 'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255),
+          'purple': (255, 0, 255), 'yellow': (255, 255, 0)}
 
 disWidth = 1000
 disHeight = 750
@@ -16,26 +16,27 @@ pygame.display.set_caption('TCGui')
 
 class Button:
 
-    def __init__(self, buttonColor, sizeX, sizeY, posX, posY, text = '', font = 'freesansbold.ttf', fontColor = 'black'):
+    def __init__(self, button_color, sizex, sizey, posx, posy, text='', font='freesansbold.ttf', font_color='black'):
         self.text = text
-        self.buttonColor = buttonColor
-        self.sizeX, self.sizeY = sizeX, sizeY
-        self.posX, self.posY = posX, posY
+        self.button_color = button_color
+        self.sizex, self.sizey = sizex, sizey
+        self.posx, self.posy = posx, posy
         self.font = font
-        self.fontColor = fontColor
+        self.font_color = font_color
 
     def draw(self):
         # x, y, width, height
-        textX = self.posX+(self.sizeX/2)
-        textY = self.posY+(self.sizeY/2)
-        textSize = self.sizeX / 5.3
-        pygame.draw.rect(gameDis, colors[self.buttonColor], (self.posX, self.posY, self.sizeX, self.sizeY))
-        dispText(self.text, textX, textY, self.font, textSize, colors[self.fontColor])
+        textx = self.posx+(self.sizex/2)
+        texty = self.posy+(self.sizey/2)
+        textsize = self.sizex / 5.3
+        pygame.draw.rect(gameDis, colors[self.button_color], (self.posx, self.posy, self.sizex, self.sizey))
+        display_text(self.text, textx, texty, self.font, textsize, colors[self.font_color])
+
 
 class ImageSprite(pygame.sprite.Sprite):
-    def __init__(self, imgName, x = 0, y = 0):
+    def __init__(self, image_name, x = 0, y = 0):
         pygame.sprite.Sprite.__init__(self)
-        self.image = img.load(str(imgName))
+        self.image = img.load(str(image_name))
         self.x = int(x)
         self.y = int(y)
 
@@ -50,14 +51,14 @@ class ImageSprite(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, deg)
 
 testButton = Button('green', 200, 50, 300, 300, 'testButton')
-testSprite = ImageSprite('BasicCard.png', 300, 300)
+testSprite = ImageSprite('assets/cardimg/BasicCard.png', 300, 300)
 
 
-def dispText(msg, textX, textY, font = 'freesansbold.ttf', fontSize = 20, textColor = (0,0,0), bgColor = None):
-    msgFont = pygame.font.Font(str(font), int(fontSize))
-    textSurface = msgFont.render(msg, True, textColor, bgColor)
+def display_text(msg, textx, texty, font='freesansbold.ttf', font_size=20, text_color=(0, 0, 0), background_color=None):
+    msgFont = pygame.font.Font(str(font), int(font_size))
+    textSurface = msgFont.render(msg, True, text_color, background_color)
     textRect = textSurface.get_rect()
-    textRect.center = (textX, textY)
+    textRect.center = (textx, texty)
     gameDis.blit(textSurface, textRect)
 
 while not crashed:
@@ -82,7 +83,7 @@ while not crashed:
             if event.key in (pygame.K_UP, pygame.K_DOWN):
                 pass
     gameDis.fill(colors['white'])
-    dispText('Message', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
+    display_text('Message', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
     testButton.draw()
     testSprite.draw()
     pygame.display.update()

@@ -39,6 +39,7 @@ $RECYCLE.BIN/
 .Trashes
 .VolumeIcon.icns
 .idea
+.cache
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -46,7 +47,10 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+emailinfo.py
 
 # Python junk
 __pycache__
 *.pyc
+*.usr
+modules/pyqueue2.py

@@ -12,8 +12,7 @@ class Sha384:
         length = bin(len(message) * 8)[2:].rjust(128, "0")
 
         while len(message) > 128:
-            self._handle(''.join(bin(i)[2:].rjust(8, "0")
-                for i in message[:128]))
+            self._handle(''.join(bin(i)[2:].rjust(8, "0") for i in message[:128]))
             message = message[128:]
 
         message = ''.join(bin(i)[2:].rjust(8, "0") for i in message) + "1"
@@ -88,13 +87,13 @@ class Md5:
     consts = [int(abs(math.sin(i+1)) * 2**32) & 0xFFFFFFFF for i in range(64)]
     inits = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]
     functs = 16*[lambda b, c, d: (b & c) | (~b & d)] + \
-             16*[lambda b, c, d: (d & b) | (~d & c)] + \
-             16*[lambda b, c, d: b ^ c ^ d] + \
-             16*[lambda b, c, d: c ^ (b | ~d)]
+        16*[lambda b, c, d: (d & b) | (~d & c)] + \
+        16*[lambda b, c, d: b ^ c ^ d] + \
+        16*[lambda b, c, d: c ^ (b | ~d)]
     idxfuncts = 16*[lambda i: i] + \
-                16*[lambda i: (5*i + 1)%16] + \
-                16*[lambda i: (3*i + 5)%16] + \
-                16*[lambda i: (7*i)%16]
+        16*[lambda i: (5*i + 1)%16] + \
+        16*[lambda i: (3*i + 5)%16] + \
+        16*[lambda i: (7*i)%16]
 
     def __init__(self, message):
         message = bytearray(message.encode())
@@ -128,10 +127,3 @@ class Md5:
     def rotleft(self, x, amount):
         x &= 0xFFFFFFFF
         return ((x<<amount) | (x>>(32-amount))) & 0xFFFFFFFF
-
-if __name__ == '__main__':
-    from hashlib import md5, sha384
-    print('stdlib md5', md5('weef'.encode()).hexdigest())
-    print('purepy md5', Md5('weef').hexdigest)
-    print('stdlib sha384', sha384('weef'.encode()).hexdigest())
-    print('purepy sha384', Sha384('weef').hexdigest)
