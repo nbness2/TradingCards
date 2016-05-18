@@ -1,144 +1,105 @@
-class DoubleLinkedList(object):
-
-    start = None
-    end = None
-
-    def __len__(self):
-        cur_ref = self.start
-        startlen = 0
-        endlen = 0
-        while cur_ref is not None:
-            startlen += 1
-            cur_ref = cur_ref['next']
-        cur_ref = self.end
-        while cur_ref is not None:
-            endlen += 1
-            cur_ref = cur_ref['last']
-        return startlen
-
-    def _append(self, data, start=True):
-        new_ref = {'data': data, 'last': None, 'next': None}
-        if start:
-            if self.start is None:
-                self.start = self.end = new_ref
-            else:
-                new_ref['last'] = self.end
-                new_ref['next'] = None
-                self.end['next'] = new_ref
-                self.end = new_ref
-        else:
-            if self.start is None:
-                self.start = self.end = new_ref
-            else:
-                new_ref['next'] = self.start
-                new_ref['last'] = None
-                self.start['last'] = new_ref
-                self.start = new_ref
-
-    def appendright(self, data):
-        self._append(data)
-
-    def appendleft(self, data):
-        self._append(data, False)
-
-    def _extend(self, data, start=True, flip=False):
-        if not getattr(data, '__iter__'):
-            raise TypeError('{} is not iterable'.format(type(data)))
-        if flip:
-            data = data[::-1]
-        for item in data:
-            if start:
-                self.appendleft(item)
-            else:
-                self.appendright(item)
-
-    def extendright(self, data, flip=False):
-        self._extend(data, False, flip=flip)
-
-    def extendleft(self, data, flip=True):
-        self._extend(data, True, flip=flip)
-
-    def remove(self, value, remall=False, start=True):
-        removes = []
-        if hasattr(value, '__iter__'):
-            removes.extend(value)
-        else:
-            removes.append(value)
-        for value in removes:
-            if start:
-                cur_ref = self.start
-            elif not start:
-                cur_ref = self.end
-            while cur_ref is not None:
-                if cur_ref['data'] == value:
-                    if start:
-                        if cur_ref['last']:
-                            cur_ref['last']['next'] = cur_ref['next']
-                            cur_ref['next']['last'] = cur_ref['last']
-                        else:
-                            self.start = cur_ref['next']
-                            if len(self) >= 1:
-                                cur_ref['next']['last'] = None
-                            else:
-                                cur_ref['data'] = None
-                    else:
-                        if cur_ref['next']:
-                            cur_ref['next']['last'] = cur_ref['last']
-                            cur_ref['last']['next'] = cur_ref['next']
-                        else:
-                            self.start = cur_ref['last']
-                            if len(self) >= 1:
-                                cur_ref['last']['next'] = None
-                            else:
-                                cur_ref['data'] = None
-                if remall:
-                    if start:
-                        cur_ref = cur_ref['next']
-                    else:
-                        cur_ref = cur_ref['last']
-
-    def _pop(self, start=True):
-        if len(self) > 0:
-            if start:
-                popval = self.start['data']
-                self.remove(popval)
-            else:
-                popval = self.end['data']
-                self.remove(popval, start=False)
-            return popval
-        else:
-            raise IndexError('pop from empty list.')
-
-    def popleft(self):
-        return self._pop(False)
-
-    def popright(self):
-        return self._pop()
+class Reference:
+    def __init__(self, data, last_ref, next_ref):
+        self.data, last_ref, next_ref = data, last_ref, next_ref
 
     def __str__(self):
-        cur_ref = self.start
+        retstr = str([self.last_ref.data if self.last_ref else None, self.data, self.next_ref.data if self.next_ref else None])
+        return retstr[1:-1]
+
+
+class DoubleLinkedList:
+    head = None
+    end = None
+
+    def __str__(self):
+        if len(self) < 1:
+            return '[]'
+        current_ref = self.head
         retstr = '['
-        while cur_ref:
-            retstr = retstr + str(cur_ref['data']) + ', '
-            cur_ref = cur_ref['next']
+        while current_ref:
+            retstr = retstr + str(current_ref.data) + ', '
+            current_ref = current_ref.next_ref
         retstr = retstr[:len(retstr)-2] + ']'
         return retstr
 
-    def show(self):
-        cur_ref = self.start
-        while cur_ref is not None:
-            print(cur_ref['last']['data'] if cur_ref['last'] else None,
-                  cur_ref['data'],
-                  cur_ref['next']['data'] if cur_ref['next'] else None)
-            cur_ref = cur_ref['next']
+    def __len__(self):
+        length = 0
+        current_ref = self.head
+        while current_ref:
+            length += 1
+            current_ref = current_ref.next_ref
+        return length
+
+    def _append(self, data, left=False):
+        new_ref = Reference(data, None, None)
+        if self.head is None:
+            self.head = self.end = new_ref
+        else:
+            if left:
+                new_ref.next_ref = self.head
+                new_ref.last_ref = None
+                self.head.last_ref = new_ref
+                self.head = new_ref
+            else:
+                new_ref.last_ref = self.end
+                new_ref.next_ref = None
+                self.end.next_ref = new_ref
+                self.end = new_ref
+
+    def append(self, data):
+        self._append(data)
+
+    def appendleft(self, data):
+        self._append(data, True)
+
+    def _pop(self, left=False):
+        if len(self):
+            ref = self.head if left else self.end
+            self.remove(ref.data, left)
+            return ref.data
+        raise IndexError('pop from empty dequeue')
+
+    def pop(self, i=True):
+        return self._pop(bool(i))
+
+    def popleft(self):
+        return self._pop(True)
+
+    def remove(self, value, left=False):
+        current_ref = self.head if left else self.end
+        if not len(self):
+            raise IndexError('remove item from empty dequeue')
+        while current_ref:
+            if current_ref.data == value:
+                if current_ref.last_ref and current_ref.next_ref:
+                    current_ref.last_ref.next_ref = current_ref.next_ref
+                    current_ref.next_ref.last_ref = current_ref.last_ref
+                else:
+                    if left:
+                        self.head = current_ref.next_ref
+                        if current_ref.next_ref:
+                            current_ref.next_ref.last_ref = None
+                    else:
+                        self.end = current_ref.last_ref
+                        if current_ref.last_ref:
+                            current_ref.last_ref.next_ref = None
+                break
+            else:
+                current_ref = current_ref.next_ref if left else current_ref.last_ref
+
+    def reveal(self):
+        current_ref = self.head
+        while current_ref:
+            print(current_ref)
+            current_ref = current_ref.next_ref
 
 
 class Queue:
-    def __init__(self, qtype='f', maxsize=None):
-        if qtype.lower()[0] in 'lf':
-            self.qtype = qtype
+    def __init__(self, queue_type='f', maxsize=None):
+        if queue_type.lower()[0] in 'lf':
+            self.queue_type = queue_type
         else:
-            raise TypeError('qtype must be (l) or (f)')
+            raise TypeError('queue_type must be (l) or (f)')
         if maxsize:
             self.maxsize = maxsize
         else:
@@ -155,9 +116,9 @@ class Queue:
         self.queue.append(item)
 
     def get(self):
-        if self.qtype == 'f':
+        if self.queue_type == 'f':
             return self.queue.pop(0)
-        elif self.qtype == 'l':
+        elif self.queue_type == 'l':
             return self.queue.pop(len(self.queue)-1)
         else:
             raise TypeError('Type must be (l) or (f)')
@@ -170,6 +131,6 @@ class Queue:
 
 
 class DEQueue(Queue):
-    def __init__(self, qtype='f', maxsize=None):
-        Queue.__init__(self, qtype, maxsize)
+    def __init__(self, queue_type='f', maxsize=None):
+        Queue.__init__(self, queue_type, maxsize)
         pass
