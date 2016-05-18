@@ -95,9 +95,7 @@ class DoubleLinkedList:
     def reveal(self):
         current_ref = self.head
         while current_ref:
-            print(current_ref.last_val.data if current_ref.last_val else None,
-                  current_ref.data,
-                  current_ref.next_val.data if current_ref.next_val else None)
+            print(current_ref)
             current_ref = current_ref.next_val
 
 
