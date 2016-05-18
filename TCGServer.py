@@ -218,7 +218,6 @@ def read_user(username, userdir='users/'):
     username += '.usr'
     with open(userdir+username.lower(), 'r') as ufile:
         details = tuple([detail.strip() for detail in ufile.readlines()])
-    #user['activated'], user['actcode'], user['passhash'], user['emailhash'] = details
     return details
 
 
@@ -234,7 +233,6 @@ def activate_user(username, userdir='users/'):
     write_user((username, user_details), userdir)
     return True
 
-#this is the time you cannot log in after so many attempts
 incloginlimit = 5
 inclogintimeout = 600
 

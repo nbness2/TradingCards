@@ -1,4 +1,4 @@
-class DoubleLinkedList(object):
+class DoubleLinkedList:
 
     start = None
     end = None
@@ -71,46 +71,49 @@ class DoubleLinkedList(object):
                 cur_ref = self.end
             while cur_ref is not None:
                 if cur_ref['data'] == value:
+                    print('data matches', value)
+                    print('starting from', end=' ')
                     if start:
-                        if cur_ref['last']:
-                            cur_ref['last']['next'] = cur_ref['next']
-                            cur_ref['next']['last'] = cur_ref['last']
-                        else:
+                        print('head')
+                        cur_ref['last']['next'] = cur_ref['next']
+                        cur_ref['next']['last'] = cur_ref['last']
+                        if not cur_ref['last']:
                             self.start = cur_ref['next']
+                            cur_ref['data'] = None
                             if len(self) >= 1:
                                 cur_ref['next']['last'] = None
-                            else:
-                                cur_ref['data'] = None
+                                cur_ref['data']
+                            if not remall:
+                                break
                     else:
-                        if cur_ref['next']:
-                            cur_ref['next']['last'] = cur_ref['last']
-                            cur_ref['last']['next'] = cur_ref['next']
-                        else:
+                        print('tail')
+                        if not cur_ref['next']:
                             self.start = cur_ref['last']
+                            cur_ref['data'] = None
                             if len(self) >= 1:
-                                cur_ref['last']['next'] = None
-                            else:
-                                cur_ref['data'] = None
-                if remall:
+                                cur_ref['next']['last'] = None
+                                cur_ref['data']
+                            if not remall:
+                                break
+                else:
                     if start:
                         cur_ref = cur_ref['next']
                     else:
                         cur_ref = cur_ref['last']
 
-    def _pop(self, start=True):
+    def _pop(self, start=False):
         if len(self) > 0:
             if start:
                 popval = self.start['data']
-                self.remove(popval)
             else:
                 popval = self.end['data']
-                self.remove(popval, start=False)
+            self.remove(popval, start=start)
             return popval
         else:
             raise IndexError('pop from empty list.')
 
     def popleft(self):
-        return self._pop(False)
+        return self._pop(True)
 
     def popright(self):
         return self._pop()
@@ -131,6 +134,12 @@ class DoubleLinkedList(object):
                   cur_ref['data'],
                   cur_ref['next']['data'] if cur_ref['next'] else None)
             cur_ref = cur_ref['next']
+
+testdll = DoubleLinkedList()
+testdll.extendright([1, 2, 3, 4, 5])
+print(testdll)
+testdll.remove(2)
+print(testdll)
 
 
 class Queue:
