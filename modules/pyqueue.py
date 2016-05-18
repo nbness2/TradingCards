@@ -5,6 +5,12 @@ class Reference:
         self.last_val = last_val
         self.next_val = next_val
 
+    def __str__(self):
+        retstr = str([self.last_val.data if self.last_val else None,
+                    self.data,
+                    self.next_val.data if self.next_val else None])[1:]
+        return retstr[:-1]
+
 
 class DoubleLinkedList:
     head = None
