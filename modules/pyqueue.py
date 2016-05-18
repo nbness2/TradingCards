@@ -35,13 +35,28 @@ class DoubleLinkedList:
             current_ref = current_ref.next_val
         return length
 
-    def append(self, data):
+    def _append(self, data, left=False):
         new_ref = Reference(data, None, None)
         if self.head is None:
             self.head = self.end = new_ref
         else:
-            new_ref.last_val, new_ref.next_val = self.end, None
-            self.end.next_val, self.end = new_ref, new_ref
+            if left:
+                new_ref.next_val = self.head
+                new_ref.last_val = None
+                self.head.last_val = new_ref
+                self.head = new_ref
+            else:
+                new_ref.last_val = self.end
+                new_ref.next_val = None
+                self.end.next_val = new_ref
+                self.end = new_ref
+
+    def append(self, data):
+        self._append(data)
+
+    def appendleft(self, data):
+        self._append(data, True)
+
 
     def remove(self, value, left=False):
         #removes leftmost\rightmost value, depending on the left parameter.
