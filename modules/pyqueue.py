@@ -1,145 +1,68 @@
-class DoubleLinkedList:
+class Reference:
 
-    start = None
+    def __init__(self, data, last_val, next_val):
+        self.data = data
+        self.last_val = last_val
+        self.next_val = next_val
+
+
+class DoubleLinkedList:
+    head = None
     end = None
 
-    def __len__(self):
-        cur_ref = self.start
-        startlen = 0
-        endlen = 0
-        while cur_ref is not None:
-            startlen += 1
-            cur_ref = cur_ref['next']
-        cur_ref = self.end
-        while cur_ref is not None:
-            endlen += 1
-            cur_ref = cur_ref['last']
-        return startlen
-
-    def _append(self, data, start=True):
-        new_ref = {'data': data, 'last': None, 'next': None}
-        if start:
-            if self.start is None:
-                self.start = self.end = new_ref
-            else:
-                new_ref['last'] = self.end
-                new_ref['next'] = None
-                self.end['next'] = new_ref
-                self.end = new_ref
-        else:
-            if self.start is None:
-                self.start = self.end = new_ref
-            else:
-                new_ref['next'] = self.start
-                new_ref['last'] = None
-                self.start['last'] = new_ref
-                self.start = new_ref
-
-    def appendright(self, data):
-        self._append(data)
-
-    def appendleft(self, data):
-        self._append(data, False)
-
-    def _extend(self, data, start=True, flip=False):
-        if not getattr(data, '__iter__'):
-            raise TypeError('{} is not iterable'.format(type(data)))
-        if flip:
-            data = data[::-1]
-        for item in data:
-            if start:
-                self.appendleft(item)
-            else:
-                self.appendright(item)
-
-    def extendright(self, data, flip=False):
-        self._extend(data, False, flip=flip)
-
-    def extendleft(self, data, flip=True):
-        self._extend(data, True, flip=flip)
-
-    def remove(self, value, remall=False, start=True):
-        removes = []
-        if hasattr(value, '__iter__'):
-            removes.extend(value)
-        else:
-            removes.append(value)
-        for value in removes:
-            if start:
-                cur_ref = self.start
-            elif not start:
-                cur_ref = self.end
-            while cur_ref is not None:
-                if cur_ref['data'] == value:
-                    print('data matches', value)
-                    print('starting from', end=' ')
-                    if start:
-                        print('head')
-                        cur_ref['last']['next'] = cur_ref['next']
-                        cur_ref['next']['last'] = cur_ref['last']
-                        if not cur_ref['last']:
-                            self.start = cur_ref['next']
-                            cur_ref['data'] = None
-                            if len(self) >= 1:
-                                cur_ref['next']['last'] = None
-                                cur_ref['data']
-                            if not remall:
-                                break
-                    else:
-                        print('tail')
-                        if not cur_ref['next']:
-                            self.start = cur_ref['last']
-                            cur_ref['data'] = None
-                            if len(self) >= 1:
-                                cur_ref['next']['last'] = None
-                                cur_ref['data']
-                            if not remall:
-                                break
-                else:
-                    if start:
-                        cur_ref = cur_ref['next']
-                    else:
-                        cur_ref = cur_ref['last']
-
-    def _pop(self, start=False):
-        if len(self) > 0:
-            if start:
-                popval = self.start['data']
-            else:
-                popval = self.end['data']
-            self.remove(popval, start=start)
-            return popval
-        else:
-            raise IndexError('pop from empty list.')
-
-    def popleft(self):
-        return self._pop(True)
-
-    def popright(self):
-        return self._pop()
-
     def __str__(self):
-        cur_ref = self.start
+        if len(self) < 1:
+            return '[]'
+        current_ref = self.head
         retstr = '['
-        while cur_ref:
-            retstr = retstr + str(cur_ref['data']) + ', '
-            cur_ref = cur_ref['next']
+        while current_ref:
+            retstr = retstr + str(current_ref.data) + ', '
+            current_ref = current_ref.next_val
         retstr = retstr[:len(retstr)-2] + ']'
         return retstr
 
-    def show(self):
-        cur_ref = self.start
-        while cur_ref is not None:
-            print(cur_ref['last']['data'] if cur_ref['last'] else None,
-                  cur_ref['data'],
-                  cur_ref['next']['data'] if cur_ref['next'] else None)
-            cur_ref = cur_ref['next']
+    def __len__(self):
+        length = 0
+        current_ref = self.head
+        while current_ref:
+            length += 1
+            current_ref = current_ref.next_val
+        return length
 
-testdll = DoubleLinkedList()
-testdll.extendright([1, 2, 3, 4, 5])
-print(testdll)
-testdll.remove(2)
-print(testdll)
+    def append(self, data):
+        new_ref = Reference(data, None, None)
+        if self.head is None:
+            self.head = self.end = new_ref
+        else:
+            new_ref.last_val, new_ref.next_val = self.end, None
+            self.end.next_val, self.end = new_ref, new_ref
+
+    def remove(self, value, left=False):
+        #removes leftmost\rightmost value, depending on the left parameter.
+        current_ref = self.head if left else self.end
+        while current_ref:
+            if current_ref.data == value:
+                if current_ref.last_val and current_ref.next_val:
+                    current_ref.last_val.next_val = current_ref.next_val
+                    current_ref.next_val.last_val = current_ref.last_val
+                else:
+                    if left:
+                        self.head = current_ref.next_val
+                        current_ref.next_val.last_val = None
+                    else:
+                        self.end = current_ref.last_val
+                        current_ref.last_val.next_val = None
+            else:
+                current_ref = current_ref.next_val if left else current_ref.last_val
+            break
+
+    def reveal(self):
+        current_ref = self.head
+        while current_ref:
+            print(current_ref.last_val.data if current_ref.last_val else None,
+                  current_ref.data,
+                  current_ref.next_val.data if current_ref.next_val else None)
+            current_ref = current_ref.next_val
 
 
 class Queue:
