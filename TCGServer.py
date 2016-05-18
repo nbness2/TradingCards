@@ -242,9 +242,9 @@ HOST = ''
 PORT = 1337
 
 queues = {
-    'register': [Queue(qtype='l'), write_user],
-    'activation': [Queue(qtype='l'), activate_user],
-    'email': [Queue(qtype='l'), pyemail.send_email],
+    'register': [Queue(queue_type='l'), write_user],
+    'activation': [Queue(queue_type='l'), activate_user],
+    'email': [Queue(queue_type='l'), pyemail.send_email],
     }
 
 meow = True
