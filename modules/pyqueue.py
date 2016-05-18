@@ -57,6 +57,18 @@ class DoubleLinkedList:
     def appendleft(self, data):
         self._append(data, True)
 
+    def _pop(self, left=False):
+        if len(self):
+            ref = self.head if left else self.end
+            self.remove(ref.data, left)
+            return ref.data
+        raise IndexError('pop from empty dequeue')
+
+    def pop(self, i=True):
+        return self._pop(bool(i))
+
+    def popleft(self):
+        return self._pop(True)
 
     def remove(self, value, left=False):
         #removes leftmost\rightmost value, depending on the left parameter.
