@@ -1,15 +1,10 @@
 class Reference:
-
-    def __init__(self, data, last_val, next_val):
-        self.data = data
-        self.last_val = last_val
-        self.next_val = next_val
+    def __init__(self, data, last_ref, next_ref):
+        self.data, last_ref, next_ref = data, last_ref, next_ref
 
     def __str__(self):
-        retstr = str([self.last_val.data if self.last_val else None,
-                    self.data,
-                    self.next_val.data if self.next_val else None])[1:]
-        return retstr[:-1]
+        retstr = str([self.last_ref.data if self.last_ref else None, self.data, self.next_ref.data if self.next_ref else None])
+        return retstr[1:-1]
 
 
 class DoubleLinkedList:
@@ -23,7 +18,7 @@ class DoubleLinkedList:
         retstr = '['
         while current_ref:
             retstr = retstr + str(current_ref.data) + ', '
-            current_ref = current_ref.next_val
+            current_ref = current_ref.next_ref
         retstr = retstr[:len(retstr)-2] + ']'
         return retstr
 
@@ -32,7 +27,7 @@ class DoubleLinkedList:
         current_ref = self.head
         while current_ref:
             length += 1
-            current_ref = current_ref.next_val
+            current_ref = current_ref.next_ref
         return length
 
     def _append(self, data, left=False):
@@ -41,14 +36,14 @@ class DoubleLinkedList:
             self.head = self.end = new_ref
         else:
             if left:
-                new_ref.next_val = self.head
-                new_ref.last_val = None
-                self.head.last_val = new_ref
+                new_ref.next_ref = self.head
+                new_ref.last_ref = None
+                self.head.last_ref = new_ref
                 self.head = new_ref
             else:
-                new_ref.last_val = self.end
-                new_ref.next_val = None
-                self.end.next_val = new_ref
+                new_ref.last_ref = self.end
+                new_ref.next_ref = None
+                self.end.next_ref = new_ref
                 self.end = new_ref
 
     def append(self, data):
@@ -76,27 +71,27 @@ class DoubleLinkedList:
             raise IndexError('remove item from empty dequeue')
         while current_ref:
             if current_ref.data == value:
-                if current_ref.last_val and current_ref.next_val:
-                    current_ref.last_val.next_val = current_ref.next_val
-                    current_ref.next_val.last_val = current_ref.last_val
+                if current_ref.last_ref and current_ref.next_ref:
+                    current_ref.last_ref.next_ref = current_ref.next_ref
+                    current_ref.next_ref.last_ref = current_ref.last_ref
                 else:
                     if left:
-                        self.head = current_ref.next_val
-                        if current_ref.next_val:
-                            current_ref.next_val.last_val = None
+                        self.head = current_ref.next_ref
+                        if current_ref.next_ref:
+                            current_ref.next_ref.last_ref = None
                     else:
-                        self.end = current_ref.last_val
-                        if current_ref.last_val:
-                            current_ref.last_val.next_val = None
+                        self.end = current_ref.last_ref
+                        if current_ref.last_ref:
+                            current_ref.last_ref.next_ref = None
                 break
             else:
-                current_ref = current_ref.next_val if left else current_ref.last_val
+                current_ref = current_ref.next_ref if left else current_ref.last_ref
 
     def reveal(self):
         current_ref = self.head
         while current_ref:
             print(current_ref)
-            current_ref = current_ref.next_val
+            current_ref = current_ref.next_ref
 
 
 class Queue:
