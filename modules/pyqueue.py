@@ -71,8 +71,9 @@ class DoubleLinkedList:
         return self._pop(True)
 
     def remove(self, value, left=False):
-        #removes leftmost\rightmost value, depending on the left parameter.
         current_ref = self.head if left else self.end
+        if not len(self):
+            raise IndexError('remove item from empty dequeue')
         while current_ref:
             if current_ref.data == value:
                 if current_ref.last_val and current_ref.next_val:
@@ -81,13 +82,15 @@ class DoubleLinkedList:
                 else:
                     if left:
                         self.head = current_ref.next_val
-                        current_ref.next_val.last_val = None
+                        if current_ref.next_val:
+                            current_ref.next_val.last_val = None
                     else:
                         self.end = current_ref.last_val
-                        current_ref.last_val.next_val = None
+                        if current_ref.last_val:
+                            current_ref.last_val.next_val = None
+                break
             else:
                 current_ref = current_ref.next_val if left else current_ref.last_val
-            break
 
     def reveal(self):
         current_ref = self.head
