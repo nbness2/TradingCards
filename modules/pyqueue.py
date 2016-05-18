@@ -100,11 +100,11 @@ class DoubleLinkedList:
 
 
 class Queue:
-    def __init__(self, qtype='f', maxsize=None):
-        if qtype.lower()[0] in 'lf':
-            self.qtype = qtype
+    def __init__(self, queue_type='f', maxsize=None):
+        if queue_type.lower()[0] in 'lf':
+            self.queue_type = queue_type
         else:
-            raise TypeError('qtype must be (l) or (f)')
+            raise TypeError('queue_type must be (l) or (f)')
         if maxsize:
             self.maxsize = maxsize
         else:
@@ -121,9 +121,9 @@ class Queue:
         self.queue.append(item)
 
     def get(self):
-        if self.qtype == 'f':
+        if self.queue_type == 'f':
             return self.queue.pop(0)
-        elif self.qtype == 'l':
+        elif self.queue_type == 'l':
             return self.queue.pop(len(self.queue)-1)
         else:
             raise TypeError('Type must be (l) or (f)')
@@ -136,6 +136,6 @@ class Queue:
 
 
 class DEQueue(Queue):
-    def __init__(self, qtype='f', maxsize=None):
-        Queue.__init__(self, qtype, maxsize)
+    def __init__(self, queue_type='f', maxsize=None):
+        Queue.__init__(self, queue_type, maxsize)
         pass
