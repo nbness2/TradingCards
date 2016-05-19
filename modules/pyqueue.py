@@ -110,9 +110,8 @@ class Queue:
         return len(self.queue)
 
     def put(self, item):
-        if self.maxsize > 0:
-            if self.isfull():
-                raise ValueError('Queue is full')
+        if self.isfull():
+            raise ValueError('Queue is full')
         self.queue.append(item)
 
     def get(self):
