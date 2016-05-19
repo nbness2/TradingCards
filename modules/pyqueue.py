@@ -126,7 +126,7 @@ class Queue:
         return not bool(self.queue)
 
     def isfull(self):
-        return len(self) == self.maxsize if self.maxsize <= 0 else False
+        return len(self) == self.maxsize if self.maxsize < 0 else False
 
 
 class DEQueue(Queue):
