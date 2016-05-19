@@ -1,4 +1,4 @@
-import socket
+import socket, sys
 
 
 def client(shost, sport):
@@ -28,6 +28,7 @@ def client(shost, sport):
 
     except:
         s.close()
+    sys.exit()
 
 if __name__ == '__main__':
     host = '127.0.0.1'
