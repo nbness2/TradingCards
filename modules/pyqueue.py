@@ -19,6 +19,71 @@ class Reference:
         return revealed
 
 
+class SingleLinkedList:
+    head = None
+    end = None
+
+    def __str__(self):
+        current_ref = self.head
+        retstr = '['
+        while current_ref:
+            retstr += repr(current_ref.data)+', '
+            current_ref = current_ref.next_ref
+        return retstr[:-2]+']'
+
+    def __len__(self):
+        current_ref = self.head
+        length = 0
+        while current_ref:
+            length += 1
+            current_ref = current_ref.next_ref
+        return length
+
+    def __getitem__(self, item):
+        length = len(self)
+        if abs(item) > length:
+            raise IndexError('single linked list index out of range')
+        if item < 0:
+            item += length
+        current_ref = self.head
+        i = 0
+        while i != item:
+            current_ref = current_ref.next_ref
+            i += 1
+        return current_ref.data
+
+    def __delitem__(self, item):
+        if item > len(self)-1:
+            raise IndexError('single linked list index out of range')
+        current_ref = self.head
+        i = 0
+        while i != item:
+            last_ref = current_ref
+            current_ref = current_ref.next_ref
+            next_ref = current_ref.next_ref
+            i += 1
+        if i == 0:
+            self.head = current_ref.next_ref
+        else:
+            last_ref.next_ref = next_ref
+        del current_ref
+
+    def append(self, data):
+        new_ref = Reference(data, None)
+        if self.head is None:
+            self.head = self.end = new_ref
+        else:
+            self.end.next_ref = new_ref
+            self.end = new_ref
+
+    def remove(self, item):
+        del self[item]
+
+    def pop(self, item):
+        if item > len(self)-1:
+            raise IndexError('pop from empty single linked list')
+        return (self[item], self.remove(item))[0]
+
 
 
 class DoubleLinkedList:
