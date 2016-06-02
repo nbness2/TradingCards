@@ -188,6 +188,7 @@ class DoubleLinkedList:
     def reveal(self):
         current_ref = self.head
         while current_ref:
+            print(current_ref.reveal(), end='\n')
             current_ref = current_ref.next_ref
 
 #test = DoubleLinkedList()
@@ -219,7 +220,7 @@ class Queue:
         if self.queue_type == 'f':
             return self.queue.pop(0)
         elif self.queue_type == 'l':
-            return self.queue.pop(len(self.queue)-1)
+            return self.queue.pop()
         else:
             raise TypeError('Type must be (l) or (f)')
 
@@ -227,7 +228,7 @@ class Queue:
         return not bool(self.queue)
 
     def isfull(self):
-        return len(self) == self.maxsize if self.maxsize < 0 else False
+        return len(self) == self.maxsize if self.maxsize > 0 else False
 
 
 class DEQueue(Queue):
