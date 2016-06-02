@@ -1,10 +1,24 @@
 class Reference:
-    def __init__(self, data, last_ref, next_ref):
-        self.data, last_ref, next_ref = data, last_ref, next_ref
+    def __init__(self, data, next_ref):
+        self.data = data
+        self.next_ref = next_ref
 
     def __str__(self):
-        retstr = str([self.last_ref.data if self.last_ref else None, self.data, self.next_ref.data if self.next_ref else None])
-        return retstr[1:-1]
+        return str(self.data)
+
+    def __repr__(self):
+        return hex(id(self))
+
+    def reveal(self):
+        try:
+            revealed = str([self.last_ref.data if self.last_ref else None,
+                            self.data,
+                            self.next_ref.data if self.next_ref else None])
+        except AttributeError:
+            revealed = str([self.data, self.next_ref.data])
+        return revealed
+
+
 
 
 class DoubleLinkedList:
