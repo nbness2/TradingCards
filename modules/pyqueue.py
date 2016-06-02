@@ -96,10 +96,9 @@ class DoubleLinkedList:
         current_ref = self.head
         retstr = '['
         while current_ref:
-            retstr = retstr + str(current_ref.data) + ', '
+            retstr = retstr + repr(current_ref.data) + ', '
             current_ref = current_ref.next_ref
-        retstr = retstr[:len(retstr)-2] + ']'
-        return retstr
+        return retstr[:-2]+']'
 
     def __len__(self):
         length = 0
@@ -109,8 +108,28 @@ class DoubleLinkedList:
             current_ref = current_ref.next_ref
         return length
 
+    def __getitem__(self, item):
+        i = 0
+        neg = False
+        if abs(item) > len(self):
+            raise IndexError('double list index out of range')
+        if item >= 0:
+            current_ref = self.head
+        else:
+            neg = True
+            current_ref = self.end
+            item = -item
+            i = 1
+        while i != item:
+            if not neg:
+                current_ref = current_ref.next_ref
+            else:
+                current_ref = current_ref.last_ref
+            i += 1
+        return current_ref.data
+
     def _append(self, data, left=False):
-        new_ref = Reference(data, None, None)
+        new_ref = Reference(data, None)
         if self.head is None:
             self.head = self.end = new_ref
         else:
@@ -136,7 +155,7 @@ class DoubleLinkedList:
             ref = self.head if left else self.end
             self.remove(ref.data, left)
             return ref.data
-        raise IndexError('pop from empty dequeue')
+        raise IndexError('pop from empty double list')
 
     def pop(self, i=True):
         return self._pop(bool(i))
@@ -147,7 +166,7 @@ class DoubleLinkedList:
     def remove(self, value, left=False):
         current_ref = self.head if left else self.end
         if not len(self):
-            raise IndexError('remove item from empty dequeue')
+            raise IndexError('remove item from empty double list')
         while current_ref:
             if current_ref.data == value:
                 if current_ref.last_ref and current_ref.next_ref:
@@ -169,8 +188,11 @@ class DoubleLinkedList:
     def reveal(self):
         current_ref = self.head
         while current_ref:
-            print(current_ref)
             current_ref = current_ref.next_ref
+
+#test = DoubleLinkedList()
+#for x in range(128):
+#    test.append(x)
 
 
 class Queue:
