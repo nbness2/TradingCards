@@ -3,8 +3,6 @@ from modules import pyrand
 
 
 def runtests():
-    #rngtest()
-    #packtest()
     openpacktest('Quacker Booster', print_res=True)
 
 

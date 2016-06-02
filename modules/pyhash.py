@@ -91,16 +91,16 @@ class Md5:
         16*[lambda b, c, d: b ^ c ^ d] + \
         16*[lambda b, c, d: c ^ (b | ~d)]
     idxfuncts = 16*[lambda i: i] + \
-        16*[lambda i: (5*i + 1)%16] + \
-        16*[lambda i: (3*i + 5)%16] + \
-        16*[lambda i: (7*i)%16]
+        16*[lambda i: (5*i + 1) % 16] + \
+        16*[lambda i: (3*i + 5) % 16] + \
+        16*[lambda i: (7*i) % 16]
 
     def __init__(self, message):
         message = bytearray(message.encode())
         orig_len_in_bits = (8 * len(message)) & 0xffffffffffffffff
         message.append(0x80)
 
-        while len(message)%64 != 56:
+        while len(message) % 64 != 56:
             message.append(0)
 
         message += orig_len_in_bits.to_bytes(8, byteorder='little')
@@ -121,9 +121,10 @@ class Md5:
                 hash_blocks[i] += val
                 hash_blocks[i] &= 0xFFFFFFFF
 
-        self.digest = sum(x<<(32*i) for i, x in enumerate(hash_blocks))
+        self.digest = sum(x << (32*i) for i, x in enumerate(hash_blocks))
         self.hexdigest = '{:032x}'.format(int.from_bytes(self.digest.to_bytes(16, byteorder='little'), byteorder='big'))
 
-    def rotleft(self, x, amount):
+    @staticmethod
+    def rotleft(x, amount):
         x &= 0xFFFFFFFF
-        return ((x<<amount) | (x>>(32-amount))) & 0xFFFFFFFF
+        return ((x << amount) | (x >> (32-amount))) & 0xFFFFFFFF
