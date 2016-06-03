@@ -23,6 +23,9 @@ class SingleLinkedList:
     head = None
     end = None
 
+    def __init__(self, iterable=[]):
+        self.extend(iterable)
+
     def __str__(self):
         current_ref = self.head
         retstr = '['
@@ -76,6 +79,12 @@ class SingleLinkedList:
             self.end.next_ref = new_ref
             self.end = new_ref
 
+    def extend(self, data):
+        if not getattr(data, '__iter__'):
+            raise TypeError('{} object is not iterable'.format(type(data)))
+        for item in data:
+            self.append(item)
+
     def remove(self, item):
         del self[item]
 
@@ -89,6 +98,9 @@ class SingleLinkedList:
 class DoubleLinkedList:
     head = None
     end = None
+
+    def __init__(self, iterable=[]):
+        self.extend(iterable)
 
     def __str__(self):
         if len(self) < 1:
@@ -149,6 +161,18 @@ class DoubleLinkedList:
 
     def appendleft(self, data):
         self._append(data, True)
+
+    def _extend(self, data, left=False):
+        if not getattr(data, '__iter__'):
+            raise TypeError('{} is not iterable'.format(type(data)))
+        for item in data:
+            self._append(item, left)
+
+    def extend(self, data):
+        self._extend(data)
+
+    def extendleft(self, data):
+        self._extend(data, True)
 
     def _pop(self, left=False):
         if len(self):
