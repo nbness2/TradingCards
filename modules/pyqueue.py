@@ -27,6 +27,8 @@ class SingleLinkedList:
         self.extend(iterable)
 
     def __str__(self):
+        if not len(self):
+            return '[]'
         current_ref = self.head
         retstr = '['
         while current_ref:
