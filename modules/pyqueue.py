@@ -152,6 +152,7 @@ class DoubleLinkedList:
 
     def _append(self, data, left=False):
         new_ref = Reference(data, None)
+        new_ref.last_ref = None
         if self.head is None:
             self.head = self.end = new_ref
         else:
@@ -191,8 +192,8 @@ class DoubleLinkedList:
             return ref.data
         raise IndexError('pop from empty double list')
 
-    def pop(self, i=True):
-        return self._pop(bool(i))
+    def pop(self, i=False):
+        return self._pop(i)
 
     def popleft(self):
         return self._pop(True)
@@ -222,7 +223,7 @@ class DoubleLinkedList:
     def reveal(self):
         current_ref = self.head
         while current_ref:
-            print(current_ref.reveal(), end='\n')
+            print(current_ref.reveal())
             current_ref = current_ref.next_ref
 
 #test = DoubleLinkedList()
