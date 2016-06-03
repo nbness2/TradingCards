@@ -39,3 +39,4 @@ class DEQueue(Queue):
     def __init__(self, queue_type='f', maxsize=None):
         Queue.__init__(self, queue_type, maxsize)
         self.queue = DoubleLinkedList()
+testdq = DEQueue()

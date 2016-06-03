@@ -111,7 +111,7 @@ class SingleLinkedList:
 class DoubleLinkedList(SingleLinkedList):
     structname = 'double linked list'
 
-    def __init__(self, iterable):
+    def __init__(self, iterable=()):
         SingleLinkedList.__init__(self, iterable)
 
     def _remove(self, item):
