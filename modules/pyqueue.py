@@ -22,8 +22,9 @@ class Reference:
 class SingleLinkedList:
     head = None
     end = None
+    structname = 'single linked list'
 
-    def __init__(self, iterable=[]):
+    def __init__(self, iterable=()):
         self.extend(iterable)
 
     def __str__(self):
@@ -49,7 +50,7 @@ class SingleLinkedList:
             raise TypeError('list indices must be integer, not {}'.format(type(item)))
         length = len(self)
         if abs(item) > length:
-            raise IndexError('single linked list index out of range')
+            raise IndexError('{} index out of range'.format(self.structname))
         if item < 0:
             item += length
         current_ref = self.head
@@ -60,22 +61,7 @@ class SingleLinkedList:
         return current_ref.data
 
     def __delitem__(self, item):
-        if type(item) != int:
-            raise TypeError('list indices must be integer, not {}'.format(type(item)))
-        if item > len(self)-1:
-            raise IndexError('single linked list index out of range')
-        current_ref = self.head
-        i = 0
-        while i != item:
-            last_ref = current_ref
-            current_ref = current_ref.next_ref
-            next_ref = current_ref.next_ref
-            i += 1
-        if i == 0:
-            self.head = current_ref.next_ref
-        else:
-            last_ref.next_ref = next_ref
-        del current_ref
+        self._remove(item)
 
     def append(self, data):
         new_ref = Reference(data, None)
@@ -91,19 +77,35 @@ class SingleLinkedList:
         for item in data:
             self.append(item)
 
-    def remove(self, item):
+    def _remove(self, item):
         if type(item) != int:
             raise TypeError('list indices must be integer, not {}'.format(type(item)))
-        del self[item]
-
-    def pop(self, item):
-        if type(item) != int:
-            raise TypeError('list indices must be integer, not {}'.format(type(item)))
-        if not len(self):
-            raise IndexError('pop from empty singly linked list')
         if item > len(self)-1:
+            raise IndexError('{} index out of range'.format(self.structname))
+        current_ref = self.head
+        i = 0
+        while i != item:
+            last_ref = current_ref
+            current_ref = current_ref.next_ref
+            next_ref = current_ref.next_ref
+            i += 1
+        if i == 0:
+            self.head = current_ref.next_ref
+        else:
+            last_ref.next_ref = next_ref
+        del current_ref
+
+    def pop(self, item=None):
+        length = len(self)
+        if item is None:
+            item = length-1
+        if type(item) != int:
+            raise TypeError('list indices must be integer, not {}'.format(type(item)))
+        if not length:
+            raise IndexError('pop from empty {}'.format(self.structname))
+        if item > length-1:
             raise IndexError('pop index out of range')
-        return (self[item], self.remove(item))[0]
+        return (self[item], self._remove(item))[0]
 
 
 
