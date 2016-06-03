@@ -46,4 +46,4 @@ My pure python implementation MD5, and a more condensed and clean pure python im
 My pure python implementation of some random generator functions.
 
 #### pyqueue
-My pure python implementation of Queues and DEQueues
+My pure python implementation of Queues and DEQueues. Also contains pure python implementations of Singly linked lists and Doubly linked lists, the data structures used to make these.
