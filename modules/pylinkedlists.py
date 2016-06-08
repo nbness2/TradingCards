@@ -53,6 +53,7 @@ class SingleLinkedList:
             raise IndexError('{} index out of range'.format(self.structname))
         if item < 0:
             item += length
+        del length
         current_ref = self.head
         i = 0
         while i != item:
@@ -76,6 +77,7 @@ class SingleLinkedList:
             raise TypeError('{} object is not iterable'.format(type(data)))
         for item in data:
             self.append(item)
+        del data
 
     def _remove(self, item):
         if type(item) != int:
@@ -105,6 +107,7 @@ class SingleLinkedList:
             raise IndexError('pop from empty {}'.format(self.structname))
         if 0 < item > length-1 or (0 > item and abs(item) > length):
             raise IndexError('pop index out of range')
+        del length
         return (self[item], self._remove(item))[0]
 
     def pop(self, item=None):
@@ -121,6 +124,7 @@ class DoubleLinkedList(SingleLinkedList):
         length = len(self)
         left = False
         i = 0
+
         while True:
             if item >= 0:
                 if item >= length//2:
@@ -132,6 +136,7 @@ class DoubleLinkedList(SingleLinkedList):
                 break
             else:
                 item = abs(item+length)
+        del length
 
         while current_ref:
             if i == item:
@@ -159,6 +164,7 @@ class DoubleLinkedList(SingleLinkedList):
                 break
             else:
                 item = abs(item+length)
+        del length
 
         while current_ref:
             if i == item:
@@ -201,25 +207,29 @@ class DoubleLinkedList(SingleLinkedList):
 
     def append(self, data):
         self._append(data)
+        del data
 
     def appendleft(self, data):
         self._append(data, True)
+        del data
 
     def _extend(self, iterable, left=False):
         if not getattr(iterable, '__iter__'):
             raise TypeError('{} is not iterable'.format(type(iterable)))
         for item in iterable:
             self._append(item, left)
+        del iterable
 
     def extend(self, iterable):
         self._extend(iterable)
+        del iterable
 
     def extendleft(self, iterable):
         self._extend(iterable, True)
+        del iterable
 
     def popright(self):
         return self._pop()
 
     def popleft(self):
         return self._pop(0)
-
