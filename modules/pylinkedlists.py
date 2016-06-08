@@ -79,10 +79,11 @@ class SingleLinkedList:
             self.append(item)
         del data
 
-    def _remove(self, item):
+    def _remove(self, item, length=None):
+        length = length if length else len(self)
         if type(item) != int:
             raise TypeError('list indices must be integer, not {}'.format(type(item)))
-        if item > len(self)-1:
+        if item > length-1:
             raise IndexError('{} index out of range'.format(self.structname))
         current_ref = self.head
         i = 0
@@ -91,11 +92,13 @@ class SingleLinkedList:
             current_ref = current_ref.next_ref
             next_ref = current_ref.next_ref
             i += 1
+        data = current_ref.data
         if i == 0:
             self.head = current_ref.next_ref
         else:
             last_ref.next_ref = next_ref
         del current_ref
+        return data
 
     def _pop(self, item=None):
         length = len(self)
@@ -107,8 +110,7 @@ class SingleLinkedList:
             raise IndexError('pop from empty {}'.format(self.structname))
         if 0 < item > length-1 or (0 > item and abs(item) > length):
             raise IndexError('pop index out of range')
-        del length
-        return (self[item], self._remove(item))[0]
+        return self._remove(item, length)
 
     def pop(self, item=None):
         return self._pop(item)
@@ -148,8 +150,8 @@ class DoubleLinkedList(SingleLinkedList):
                     current_ref = current_ref.last_ref
                 i += 1
 
-    def _remove(self, item):
-        length = len(self)
+    def _remove(self, item, length=None):
+        length = length if length else len(self)
         left = False
         i = 0
 
@@ -168,6 +170,7 @@ class DoubleLinkedList(SingleLinkedList):
 
         while current_ref:
             if i == item:
+                data = current_ref.data
                 if current_ref.last_ref and current_ref.next_ref:
                     current_ref.last_ref.next_ref = current_ref.next_ref
                     current_ref.next_ref.last_ref = current_ref.last_ref
@@ -180,7 +183,8 @@ class DoubleLinkedList(SingleLinkedList):
                         self.end = current_ref.last_ref
                         if current_ref.last_ref:
                             current_ref.last_ref.next_ref = None
-                break
+                del current_ref
+                return data
             else:
                 if left:
                     current_ref = current_ref.next_ref
