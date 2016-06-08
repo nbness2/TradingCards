@@ -117,27 +117,50 @@ class DoubleLinkedList(SingleLinkedList):
     def __init__(self, iterable=()):
         SingleLinkedList.__init__(self, iterable)
 
+    def __getitem__(self, item):
+        length = len(self)
+        left = False
+        i = 0
+        while True:
+            if item >= 0:
+                if item >= length//2:
+                    item = abs(item-length+1)
+                    current_ref = self.end
+                else:
+                    left = True
+                    current_ref = self.head
+                break
+            else:
+                item = abs(item+length)
+
+        while current_ref:
+            if i == item:
+                return current_ref.data
+            else:
+                if left:
+                    current_ref = current_ref.next_ref
+                else:
+                    current_ref = current_ref.last_ref
+                i += 1
+
     def _remove(self, item):
         length = len(self)
         left = False
-        if item == 0:
-            left = True
-        elif item > 0:
-            if item <= (length-1)//2:
-                left = True
+        i = 0
+
+        while True:
+            if item >= 0:
+                if item >= length//2:
+                    item = abs(item-length+1)
+                    current_ref = self.end
+                else:
+                    left = True
+                    current_ref = self.head
+                break
             else:
-                item -= length-1
-        else:
-            if abs(item) > (length-1)//2:
-                left = True
-            item += length
-        if left:
-            i = 0
-        else:
-            i = length-1
-        current_ref = self.head if left else self.end
+                item = abs(item+length)
+
         while current_ref:
-            print(i, item)
             if i == item:
                 if current_ref.last_ref and current_ref.next_ref:
                     current_ref.last_ref.next_ref = current_ref.next_ref
@@ -155,10 +178,9 @@ class DoubleLinkedList(SingleLinkedList):
             else:
                 if left:
                     current_ref = current_ref.next_ref
-                    i += 1
                 else:
                     current_ref = current_ref.last_ref
-                    i -= 1
+                i += 1
 
     def _append(self, data, left=False):
         new_ref = Reference(data, None)
