@@ -95,7 +95,7 @@ class SingleLinkedList:
             last_ref.next_ref = next_ref
         del current_ref
 
-    def pop(self, item=None):
+    def _pop(self, item=None):
         length = len(self)
         if item is None:
             item = length-1
@@ -103,9 +103,12 @@ class SingleLinkedList:
             raise TypeError('list indices must be integer, not {}'.format(type(item)))
         if not length:
             raise IndexError('pop from empty {}'.format(self.structname))
-        if item > length-1:
+        if 0 < item > length-1 or (0 > item and abs(item) > length):
             raise IndexError('pop index out of range')
         return (self[item], self._remove(item))[0]
+
+    def pop(self, item=None):
+        return self._pop(item)
 
 
 class DoubleLinkedList(SingleLinkedList):
@@ -192,23 +195,9 @@ class DoubleLinkedList(SingleLinkedList):
     def extendleft(self, iterable):
         self._extend(iterable, True)
 
-    def _pop(self, item=None):
-        length = len(self)
-        if item is None:
-            item = length-1
-        if type(item) != int:
-            raise TypeError('list indices must be integer, not {}'.format(type(item)))
-        if not length:
-            raise IndexError('pop from empty {}'.format(self.structname))
-        if item > length-1:
-            raise IndexError('pop index out of range')
-        return (self[item], self._remove(item))[0]
-
     def popright(self):
         return self._pop()
 
     def popleft(self):
         return self._pop(0)
 
-    def pop(self, item):
-        return self._pop(item)
