@@ -6,8 +6,10 @@ class Sha384:
     _h0, _h1, _h2, _h3 = (0xcbbb9d5dc1059ed8, 0x629a292a367cd507, 0x9159015a3070dd17, 0x152fecd8f70e5939)
     _h4, _h5, _h6, _h7 = (0x67332667ffc00b31, 0x8eb44a8768581511, 0xdb0c2e0d64f98fa7, 0x47b5481dbefa4fa4)
 
-    def __init__(self, message):
+    def __init__(self, message=''):
+        self.update(message)
 
+    def update(self, message):
         message = message.encode()
         length = bin(len(message) * 8)[2:].rjust(128, "0")
 
@@ -72,9 +74,24 @@ class Sha384:
         self._h2, self._h3 = (self._h2 + c) & bignum, (self._h3 + d) & bignum
         self._h4, self._h5 = (self._h4 + e) & bignum, (self._h5 + f) & bignum
         self._h6, self._h7 = (self._h6 + g) & bignum, (self._h7 + h) & bignum
-        self.hexdigest = ''.join(hex(i)[2:].rjust(16, '0') for i in (self._h0, self._h1, self._h2, self._h3, self._h4,
-                                                                     self._h5))
 
+    def digest(self):
+        hexdigest = self.hexdigest()
+        return bytes(int(hexdigest[i * 2:i * 2 + 2], 16)
+            for i in range(len(hexdigest) // 2))
+
+    def _digest(self):
+        return self._h0, self._h1, self._h2, self._h3, self._h4, self._h5
+
+    def hexdigest(self):
+        return ''.join(hex(i)[2:].rjust(16, "0")
+            for i in self._digest())
+
+tstr = ''.join(['1' for x in range(2049)])
+shaobj = Sha384()
+print(shaobj.hexdigest())
+shaobj.update(tstr)
+print(shaobj.hexdigest())
 
 class Md5:
 
@@ -128,3 +145,4 @@ class Md5:
     def rotleft(x, amount):
         x &= 0xFFFFFFFF
         return ((x << amount) | (x >> (32-amount))) & 0xFFFFFFFF
+
