@@ -115,6 +115,9 @@ class SingleLinkedList:
     def pop(self, item=None):
         return self._pop(item)
 
+    def popleft(self):
+        return self._pop(0)
+
 
 class DoubleLinkedList(SingleLinkedList):
     structname = 'double linked list'
