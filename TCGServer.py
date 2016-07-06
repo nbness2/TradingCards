@@ -1,7 +1,7 @@
 import sys, time, socketserver
 import emailinfo, regrules, TCGMain
 from modules import pyrand, pyemail, pyhash
-from modules.pyqueue import Queue
+from queues import Queue
 from threading import Thread
 from os import walk
 
@@ -103,7 +103,7 @@ class UserHandler(socketserver.BaseRequestHandler):
                     passed = True
             del paramchecks, passed
             ehash = pyhash.Sha384(useremail.lower()).hexdigest
-            activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::4]
+            activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::3]
             queues['register'][0].put((username, (0, activation_code, passhash, ehash)))
             emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
             email_params = (useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr, False)
