@@ -1,11 +1,12 @@
-from pylinkedlists import DoubleLinkedList
+from modules.pylinkedlists import DoubleLinkedList
+
 
 class Queue:
     def __init__(self, queue_type='f', maxsize=None):
         if queue_type.lower()[0] in 'lf':
             self.queue_type = queue_type
         else:
-            raise TypeError('queue_type must be (l) or (f)')
+            raise TypeError('invalid queue type {}'.format(queue_type))
         if maxsize:
             self.maxsize = maxsize
         else:
@@ -15,10 +16,10 @@ class Queue:
     def __len__(self):
         return len(self.queue)
 
-    def put(self, item):
+    def put(self, data):
         if self.isfull():
             raise ValueError('Queue is full')
-        self.queue.append(item)
+        self.queue.append(data)
 
     def get(self):
         if self.queue_type == 'f':
@@ -26,7 +27,7 @@ class Queue:
         elif self.queue_type == 'l':
             return self.queue.pop()
         else:
-            raise TypeError('Type must be (l) or (f)')
+            raise TypeError('invalid queue type {}'.format(self.queue_type))
 
     def empty(self):
         return not bool(self.queue)
@@ -39,4 +40,14 @@ class DEQueue(Queue):
     def __init__(self, queue_type='f', maxsize=None):
         Queue.__init__(self, queue_type, maxsize)
         self.queue = DoubleLinkedList()
-testdq = DEQueue()
+
+    def popleft(self):
+        return self.queue.popleft()
+
+    def pop(self):
+        return self.queue.pop()
+
+    def putleft(self, data):
+        if self.isfull():
+            raise ValueError('Queue is full')
+        self.queue.appendleft(data)
