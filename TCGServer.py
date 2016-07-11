@@ -27,7 +27,7 @@ class UserHandler(socketserver.BaseRequestHandler):
              'invalid_act_code': 'Invalid Username, Password or Activation Code',
              'not_activated': 'This account has not been activated yet.',
              'already_activated': 'That account has already been activated. ',
-             'registration_success': 'Your account has been registration_success and an activation code has been sent to your email.',
+             'registration_success': 'Your account has been registered and an activation code has been sent to your email.',
              'login_success': 'Successfully logged in.',
              'invalid_up': 'Invalid Username or Password.',
              'login_activate_register': '(L)ogin, (A)ctivate, or (R)egister: '
