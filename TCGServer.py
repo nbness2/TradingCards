@@ -52,7 +52,7 @@ class UserHandler(socketserver.BaseRequestHandler):
     def login(self):
         socket = self.request
         username = send_receive(socket, 'Username: ', recvsize=16)
-        passhash = pyhash.Sha384(send_receive(socket, 'Password: ', recvsize=32)).hexdigest
+        passhash = pyhash.Sha384(send_receive(socket, 'Password: ', recvsize=32)).hexdigest()
         activated, activation_code, user_passhash, user_emailhash = read_user(username)
         activated = int(activated)
         if passhash == user_passhash:
@@ -68,14 +68,14 @@ class UserHandler(socketserver.BaseRequestHandler):
         socket = self.request
         if not (username and passhash):
             username = send_receive(socket, self.message['activate_username'], recvsize=16)
-            passhash = pyhash.Sha384(send_receive(socket, self.message['activate_password'], recvsize=32)).hexdigest
+            passhash = pyhash.Sha384(send_receive(socket, self.message['activate_password'], recvsize=32)).hexdigest()
         user_activated, user_activation_code, user_passhash, user_emailhash = read_user(username)
         user_activated = int(user_activated)
         del user_emailhash
         if user_activated:
             send_receive(socket, self.message['already_activated'], 'p')
         else:
-            activation_code = send_receive(socket, self.message['activation_code'], recvsize=8)
+            activation_code = send_receive(socket, self.message['activation_code'], recvsize=11)
             if passhash == user_passhash and activation_code == user_activation_code:
                 queues['activation'][0].put(username)
                 send_receive(socket, self.message['act_success'], 'p')
@@ -97,12 +97,12 @@ class UserHandler(socketserver.BaseRequestHandler):
                 password = send_receive(socket, self.message['register_password'], recvsize=32)
                 useremail = send_receive(socket, self.message['register_email'], recvsize=64)
                 paramchecks = check_details(username, password, useremail)
-                passhash = pyhash.Sha384(password).hexdigest
+                passhash = pyhash.Sha384(password).hexdigest()
                 del password
                 if type(paramchecks) == bool:
                     passed = True
             del paramchecks, passed
-            ehash = pyhash.Sha384(useremail.lower()).hexdigest
+            ehash = pyhash.Sha384(useremail.lower()).hexdigest()
             activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::3]
             queues['register'][0].put((username, (0, activation_code, passhash, ehash)))
             emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
