@@ -1,0 +1,5 @@
+7/11/2016
+will change storage system so each user has a folder and various things are contained within (card collection, gold amount, password hash, etc)
+- info such as activation, passhash and email hash will be stored in info.usr
+- cards and currency etc will be stored in inventory.inv
+- possible future options will be stored in options.opt

@@ -111,7 +111,10 @@ class UserHandler(socketserver.BaseRequestHandler):
             del username, activation_code, passhash, ehash,
             send_receive(socket, self.message['registration_success'], 'p', 1)
         except Exception as e:
-            print(e)
+            write_error(e) #not good practise but if problems do happen i can add exceptions for those cases
+
+    def menu(self): #cli menu
+        pass
 
 
 class LoginContainer(Thread, dict):
@@ -233,6 +236,11 @@ def activate_user(username, userdir='users/'):
     user_details[0] = 1
     write_user((username, user_details), userdir)
     return True
+
+
+def write_error(exception):
+    with open('errors.txt', 'w') as errfile:
+        errfile.write(str(exception))
 
 incloginlimit = 5
 inclogintimeout = 600
