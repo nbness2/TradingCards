@@ -16,26 +16,26 @@ class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 class UserHandler(socketserver.BaseRequestHandler):
     message = {
-             'regusername': 'Min 4 characters, max 16 characters.\nEnter desired username: ',
-             'regpassword': '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot contain symbols.\nEnter password: ',
-             'regemail': '\nYour activation code will be sent to this email.\nEnter a valid email: ',
-             'actusername': 'Enter the username of the account you wish to activate: ',
-             'actpassword': 'Enter the password of the account you wish to activate: ',
-             'actemail': 'Enter the email you used to register this account: ',
-             'actcode': 'Enter the activation code found in your email: ',
+             'register_username': 'Min 4 characters, max 16 characters.\nEnter desired username: ',
+             'register_password': '\nMin 8 characters, max 32 characters. Must have at least 1 letter and number.\nCannot contain symbols.\nEnter password: ',
+             'register_email': '\nYour activation code will be sent to this email.\nEnter a valid email: ',
+             'activate_username': 'Enter the username of the account you wish to activate: ',
+             'activate_password': 'Enter the password of the account you wish to activate: ',
+             'activate_email': 'Enter the email you used to register this account: ',
+             'activation_code': 'Enter the activation code found in your email: ',
              'act_success': 'Your account has been successfully activated.',
-             'invalid_act': 'Invalid Username, Password or Activation Code',
+             'invalid_act_code': 'Invalid Username, Password or Activation Code',
              'not_activated': 'This account has not been activated yet.',
-             'alreadyact': 'That account has already been activated. ',
-             'registered': 'Your account has been registered and an activation code has been sent to your email.',
+             'already_activated': 'That account has already been activated. ',
+             'registration_success': 'Your account has been registration_success and an activation code has been sent to your email.',
              'login_success': 'Successfully logged in.',
              'invalid_up': 'Invalid Username or Password.',
-             'log/act/reg': '(L)ogin, (A)ctivate, or (R)egister: '
+             'login_activate_register': '(L)ogin, (A)ctivate, or (R)egister: '
              }
 
     def handle(self):
         while True:
-            response = send_receive(self.request, self.message['log/act/reg']).lower()
+            response = send_receive(self.request, self.message['login_activate_register']).lower()
             if response == 'l':
                 self.login()
             elif response == 'a':
@@ -53,7 +53,7 @@ class UserHandler(socketserver.BaseRequestHandler):
         socket = self.request
         username = send_receive(socket, 'Username: ', recvsize=16)
         passhash = pyhash.Sha384(send_receive(socket, 'Password: ', recvsize=32)).hexdigest
-        activated, actcode, user_passhash, user_emailhash = read_user(username)
+        activated, activation_code, user_passhash, user_emailhash = read_user(username)
         activated = int(activated)
         if passhash == user_passhash:
             if activated:
@@ -67,20 +67,20 @@ class UserHandler(socketserver.BaseRequestHandler):
     def activate(self, username=None, passhash=None):
         socket = self.request
         if not (username and passhash):
-            username = send_receive(socket, self.message['actusername'], recvsize=16)
-            passhash = pyhash.Sha384(send_receive(socket, self.message['actpassword'], recvsize=32)).hexdigest
-        user_activated, user_actcode, user_passhash, user_emailhash = read_user(username)
+            username = send_receive(socket, self.message['activate_username'], recvsize=16)
+            passhash = pyhash.Sha384(send_receive(socket, self.message['activate_password'], recvsize=32)).hexdigest
+        user_activated, user_activation_code, user_passhash, user_emailhash = read_user(username)
         user_activated = int(user_activated)
         del user_emailhash
         if user_activated:
-            send_receive(socket, self.message['alreadyact'], 'p')
+            send_receive(socket, self.message['already_activated'], 'p')
         else:
-            activation_code = send_receive(socket, self.message['actcode'], recvsize=8)
-            if passhash == user_passhash and activation_code == user_actcode:
+            activation_code = send_receive(socket, self.message['activation_code'], recvsize=8)
+            if passhash == user_passhash and activation_code == user_activation_code:
                 queues['activation'][0].put(username)
                 send_receive(socket, self.message['act_success'], 'p')
             else:
-                send_receive(socket, self.message['invalid_act'], 'p')
+                send_receive(socket, self.message['invalid_act_code'], 'p')
 
     def register(self):
         try:
@@ -93,9 +93,9 @@ class UserHandler(socketserver.BaseRequestHandler):
                     estring = err_str(paramchecks, ['Username', 'Password', 'Email'])
                     send_receive(socket, estring, 'p', 1)
                     del estring
-                username = send_receive(socket, self.message['regusername'], recvsize=16)
-                password = send_receive(socket, self.message['regpassword'], recvsize=32)
-                useremail = send_receive(socket, self.message['regemail'], recvsize=64)
+                username = send_receive(socket, self.message['register_username'], recvsize=16)
+                password = send_receive(socket, self.message['register_password'], recvsize=32)
+                useremail = send_receive(socket, self.message['register_email'], recvsize=64)
                 paramchecks = check_details(username, password, useremail)
                 passhash = pyhash.Sha384(password).hexdigest
                 del password
@@ -109,7 +109,7 @@ class UserHandler(socketserver.BaseRequestHandler):
             email_params = (useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr, False)
             queues['email'][0].put(email_params)
             del username, activation_code, passhash, ehash,
-            send_receive(socket, self.message['registered'], 'p', 1)
+            send_receive(socket, self.message['registration_success'], 'p', 1)
         except Exception as e:
             print(e)
 

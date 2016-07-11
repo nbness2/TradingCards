@@ -1,1 +1,2 @@
 python TCGServer.py
+PAUSE
