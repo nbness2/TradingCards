@@ -1,4 +1,4 @@
-import math
+from math import sin
 
 
 class Sha384:
@@ -84,14 +84,8 @@ class Sha384:
         return self._h0, self._h1, self._h2, self._h3, self._h4, self._h5
 
     def hexdigest(self):
-        return ''.join(hex(i)[2:].rjust(16, "0")
-            for i in self._digest())
+        return ''.join(hex(i)[2:].rjust(16, "0") for i in self._digest())
 
-tstr = ''.join(['1' for x in range(2049)])
-shaobj = Sha384()
-print(shaobj.hexdigest())
-shaobj.update(tstr)
-print(shaobj.hexdigest())
 
 class Md5:
 
@@ -101,7 +95,7 @@ class Md5:
         for y in range(4):
             rotate_amounts.extend(x)
 
-    consts = [int(abs(math.sin(i+1)) * 2**32) & 0xFFFFFFFF for i in range(64)]
+    consts = [int(abs(sin(i+1)) * 2**32) & 0xFFFFFFFF for i in range(64)]
     inits = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]
     functs = 16*[lambda b, c, d: (b & c) | (~b & d)] + \
         16*[lambda b, c, d: (d & b) | (~d & c)] + \
