@@ -3,7 +3,7 @@ import emailinfo, regrules, TCGMain
 from modules import pyrand, pyemail, pyhash
 from queues import Queue
 from threading import Thread
-from os import walk, makedirs
+from os import walk
 
 
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -30,8 +30,7 @@ class UserHandler(socketserver.BaseRequestHandler):
              'registration_success': 'Your account has been registered and an activation code has been sent to your email.',
              'login_success': 'Successfully logged in.',
              'invalid_up': 'Invalid Username or Password.',
-             'login_activate_register': '(L)ogin, (A)ctivate, or (R)egister: ',
-             'activation_email': 'Welcome, {0}!\n Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n\n\nCheck out the source code for this TCG: https://github.com/nbness2/TradingCards/'
+             'login_activate_register': '(L)ogin, (A)ctivate, or (R)egister: '
              }
 
     def handle(self):
@@ -106,7 +105,7 @@ class UserHandler(socketserver.BaseRequestHandler):
             ehash = pyhash.Sha384(useremail.lower()).hexdigest()
             activation_code = pyhash.Md5(pyrand.randstring(16)).hexdigest[::3]
             queues['register'][0].put((username, (0, activation_code, passhash, ehash)))
-            emessage = self.message['activation_email'].format(username, activation_code)
+            emessage = 'Dear {0}, Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n'.format(username, activation_code)
             email_params = (useremail, emessage, 'pyTCG activation code', email, emailpass, smtpaddr, False)
             queues['email'][0].put(email_params)
             del username, activation_code, passhash, ehash,
@@ -116,6 +115,18 @@ class UserHandler(socketserver.BaseRequestHandler):
 
     def menu(self): #cli menu
         pass
+
+
+class LoginContainer(Thread, dict):
+    def __init__(self):
+        dict.__init__(self)
+        Thread.__init__(self)
+
+    def add_sess(self, sessname):
+        self[sessname] = pyhash.Md5(sessname+pyrand.randstring(2))[:16]
+
+    def del_sess(self, sessname):
+        del self[sessname]
 
 
 class Session:
@@ -134,9 +145,8 @@ class QueueWorker(Thread):
                 if not self.queue.empty():
                     parts = self.queue.get()
                     self.funct(parts)
-            except Exception as e:
-                write_error(e)
-                self.put(parts)
+            except:
+                self.queue.put(parts)
 
 
 def send_receive(socket, sendmsg, stype='i', recvsize=1):
@@ -164,49 +174,53 @@ def err_str(errdict, paramorder=()):
 
 def check_details(username=None, password=None, email=None):
     faults = {'Username': [], 'Password': [], 'Email': []}
+    full_pass = True
 
     if password:
         passwordc = regrules.check_password(password)
         del password
         if len(passwordc):
+            full_pass = False
             faults['Password'].extend(passwordc)
 
     if username:
         usernamec = regrules.check_username(username)
         if len(usernamec):
+            full_pass = False
             faults['Username'].extend(usernamec)
 
     if username.lower() in read_usernames():
+        full_pass = False
         faults['Username'].append('username taken')
 
     if email:
         emailc = regrules.check_email(email)
         del email
         if type(emailc) != bool:
+            full_pass = False
             faults['Email'].append(emailc)
 
-    for fault in faults:
-        if len(fault) > 0:
-            return faults
-    return True
+    if full_pass:
+        return True
+    return faults
 
 
 def read_usernames(userdir='users'):
-    return [username for username in walk(userdir).__next__()[1]]
+    return [username[:-4] for username in walk(userdir).__next__()[2]]
 
 
 def write_user(details, userdir='users/'):
     username, details = details
-    userdir += username+'/'
-    makedirs(userdir, exist_ok=True)
-    with open(userdir+'/info.usr', 'w') as ufile:
+    username += '.usr'
+    with open(userdir+username.lower(), 'w') as ufile:
         for detail in details:
             ufile.write(str(detail)+'\n')
     return True
 
 
 def read_user(username, userdir='users/'):
-    with open(userdir+username.lower()+'/info.usr', 'r') as ufile:
+    username += '.usr'
+    with open(userdir+username.lower(), 'r') as ufile:
         details = tuple([detail.strip() for detail in ufile.readlines()])
     return details
 
@@ -228,10 +242,6 @@ def write_error(exception):
     with open('errors.txt', 'w') as errfile:
         errfile.write(str(exception))
 
-
-def makedir(path):
-    makedirs(path, exist_ok=True)
-
 incloginlimit = 5
 inclogintimeout = 600
 
@@ -245,6 +255,8 @@ queues = {
     'activation': [Queue('l'), activate_user],
     'email': [Queue('l'), pyemail.send_email],
     }
+
+meow = True
 
 workers = {queue: QueueWorker(queues[queue]) for queue in queues}
 
