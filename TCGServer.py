@@ -3,7 +3,7 @@ import emailinfo, regrules, TCGMain
 from modules import pyrand, pyemail, pyhash
 from queues import Queue
 from threading import Thread
-from os import walk
+from os import walk, makedirs
 
 
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -174,35 +174,31 @@ def err_str(errdict, paramorder=()):
 
 def check_details(username=None, password=None, email=None):
     faults = {'Username': [], 'Password': [], 'Email': []}
-    full_pass = True
 
     if password:
         passwordc = regrules.check_password(password)
         del password
         if len(passwordc):
-            full_pass = False
             faults['Password'].extend(passwordc)
 
     if username:
         usernamec = regrules.check_username(username)
-        if len(usernamec):
-            full_pass = False
+        if len(regrules.check_username(username)):
             faults['Username'].extend(usernamec)
 
     if username.lower() in read_usernames():
-        full_pass = False
         faults['Username'].append('username taken')
 
     if email:
         emailc = regrules.check_email(email)
         del email
         if type(emailc) != bool:
-            full_pass = False
             faults['Email'].append(emailc)
 
-    if full_pass:
-        return True
-    return faults
+    for fault in faults:
+        if len(fault):
+            return faults
+    return True
 
 
 def read_usernames(userdir='users'):
