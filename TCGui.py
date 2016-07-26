@@ -34,7 +34,7 @@ class Button:
 
 
 class ImageSprite(pygame.sprite.Sprite):
-    def __init__(self, image_name, x = 0, y = 0):
+    def __init__(self, image_name, x=0, y=0):
         pygame.sprite.Sprite.__init__(self)
         self.image = img.load(str(image_name))
         self.x = int(x)
@@ -48,7 +48,8 @@ class ImageSprite(pygame.sprite.Sprite):
         self.y += -int(y)
 
     def rotate(self, deg):
-        self.image = pygame.transform.rotate(self.image, deg)
+        #self.image = pygame.transform.rotate(self.image, deg)
+        self.image = pygame.transform
 
 testButton = Button('green', 200, 50, 300, 300, 'testButton')
 testSprite = ImageSprite('assets/cardimg/BasicCard.png', 300, 300)
@@ -83,7 +84,7 @@ while not crashed:
             if event.key in (pygame.K_UP, pygame.K_DOWN):
                 pass
     gameDis.fill(colors['white'])
-    display_text('Message', 300, 300,'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
+    display_text('Message', 300, 300, 'freesansbold.ttf', 80, colors['blue'], colors['yellow'])
     testButton.draw()
     testSprite.draw()
     pygame.display.update()
