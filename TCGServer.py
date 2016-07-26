@@ -30,7 +30,8 @@ class UserHandler(socketserver.BaseRequestHandler):
              'registration_success': 'Your account has been registered and an activation code has been sent to your email.',
              'login_success': 'Successfully logged in.',
              'invalid_up': 'Invalid Username or Password.',
-             'login_activate_register': '(L)ogin, (A)ctivate, or (R)egister: '
+             'login_activate_register': '(L)ogin, (A)ctivate, or (R)egister: ',
+             'activation_email': 'Welcome, {0}!\n Thank you for registering your account with pyTCG! Your activation code is:\n{1}\n\n\nCheck out the source code for this TCG: https://github.com/nbness2/TradingCards/'
              }
 
     def handle(self):
