@@ -1,6 +1,5 @@
 
 def check_username(username):
-    from TCGServer import read_usernames
     #username length between 4 and 16
     #username cannot contain symbols
     #must not be taken
@@ -26,12 +25,6 @@ def check_password(password):
 
 def check_email(email):
     #must look like an email. If they don't get email it is because they entered wrong.
-    if '@' not in email:
-        return ('invalid email')
-    uname, domain = email.split('@')
-    if '.' not in domain:
-        return ('invalid email')
-    domain, ext = domain.split('.')
-    if len(domain) < 2 or len(ext) <= 1:
+    if '@' not in email or '.' not in esplit[0] or (len(esplit[0].split('.')[0]) <= 1 or len(esplit[0].split('.')[1]) <= 1):
         return ('invalid email')
     return True
