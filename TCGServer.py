@@ -210,6 +210,7 @@ def read_usernames(userdir='users'):
 
 
 def write_user(details, userdir='users/'):
+    makedir('users/')
     username, details = details
     username += '.usr'
     with open(userdir+username.lower(), 'w') as ufile:
@@ -241,6 +242,10 @@ def activate_user(username, userdir='users/'):
 def write_error(exception):
     with open('errors.txt', 'w') as errfile:
         errfile.write(str(exception))
+
+
+def makedir(path):
+    makedirs(path, exist_ok=True)
 
 incloginlimit = 5
 inclogintimeout = 600
