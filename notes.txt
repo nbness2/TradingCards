@@ -10,3 +10,7 @@ back from break heres what i decided about file system and other possible future
 - cards currency and other inventory related things will be stored in inventory.inv
 - options like gui vs cli mode will be stored in options.opt. Options are stored here for ease of access.
 --- Another thing to note: Users will be able to select local storage or server storage for options.
+7/28/2016
+want to change it from 1 handler per socket to more than 1 handler per socket before I start doing menu things.
+- Thinking maybe 10 sockets per handler will be good, will raise the max number of connections by 10.
+- Once I make myself a proper testing script, I will confirm if it needs to be more or less.
