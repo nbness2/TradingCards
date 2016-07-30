@@ -1,4 +1,5 @@
 import socket, sys
+from msvcrt import getwch, putwch, putch
 
 
 def client(shost, sport):
@@ -22,6 +23,13 @@ def client(shost, sport):
                     if len(message):
                         valid = True
                 s.send(message[:32].encode())
+            elif command == 0x02:
+                valid = False
+                while not valid:
+                    message = getchstr()
+                    if len(message):
+                        valid = True
+                s.send(message[:32].encode())
             elif command == 0x09:
                 break
         s.close()
@@ -29,6 +37,32 @@ def client(shost, sport):
     except:
         s.close()
     sys.exit()
+
+def getchstr():
+    string = ''
+    while True:
+        char = chr(ord(getwch()))
+        if char in ('\r', '\n', '\b', '\x08'):
+            if char in ('\b', '\x08'):
+                if len(string):
+                    string = string[:-1]
+                    putwch('\b')
+            else:
+                putwch('\n')
+                return string
+        else:
+            string += char
+        putwch(' ')
+        clrline()
+        putstr('*'*len(string))
+
+
+def putstr(string):
+    for char in string:
+        putch(char.encode())
+
+def clrline():
+    putstr('\b'*80)
 
 if __name__ == '__main__':
     host = '127.0.0.1'
