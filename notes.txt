@@ -14,3 +14,10 @@ back from break heres what i decided about file system and other possible future
 want to change it from 1 handler per socket to more than 1 handler per socket before I start doing menu things.
 - Thinking maybe 10 sockets per handler will be good, will raise the max number of connections by 10.
 - Once I make myself a proper testing script, I will confirm if it needs to be more or less.
+8/4/2016
+work makes me busy, have 2 more-refined ideas.
+- Right now, each UserHandler is assigned to ONE socket, and it's not an issue with smaller userbases, but for larger ones it can pose a problem. There's a GIL thread limit, and with what we currently have, we couldn't have too many people connected at once as it would hit the limit quickly. Another problem that arose, each UserHandler idles and does nothing while waiting for a reply from their socket.
+- What I'm proposing is a new system to solve the problems, or at least significantly reduce the impact. The most obvious solutions is to increase the amount of sockets that can be assigned to each handler, as that will (hopefully) greatly reduce the idling time of each handler. My only problems are how should I actually implement this without having to do a huge rewrite? Can I pull it off?
+-- Each handler is a thread (like now) that handles X sockets at a time. It will poll over sockets (?) every quarter of a second so it doesn't hog CPU usage while waiting for replies. If a handler is empty it will be terminated, and if another handler is needed, one will be created. They are created on a need-basis
+-- Another possible solution is multiprocessing rather than threading, as multiprocessing doesn't hit the thread limit. I haven't done too much research into multiprocessing, and the most complex thing I've written with the multiprocessing module is `import multiprocessing`. This will delay me but the performance difference might be worth it (?)
+-- I should just make a separate branch for each of them.
