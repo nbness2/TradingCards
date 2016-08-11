@@ -26,7 +26,8 @@ def client(shost, sport):
             elif command == 0x02:
                 valid = False
                 while not valid:
-                    message = getchstr()
+                    message = getchstr(data)
+                    print(message)
                     if len(message):
                         valid = True
                 s.send(message[:32].encode())
@@ -34,35 +35,38 @@ def client(shost, sport):
                 break
         s.close()
 
-    except:
+    except Exception as e:
         s.close()
+        input(e)
     sys.exit()
 
-def getchstr():
+
+def getchstr(data):
     string = ''
+    print(data, end='')
     while True:
         char = chr(ord(getwch()))
+        clr(len(string))
         if char in ('\r', '\n', '\b', '\x08'):
             if char in ('\b', '\x08'):
                 if len(string):
                     string = string[:-1]
-                    putwch('\b')
             else:
-                putwch('\n')
+                putstr('\n')
                 return string
         else:
             string += char
-        putwch(' ')
-        clrline()
         putstr('*'*len(string))
 
 
 def putstr(string):
     for char in string:
-        putch(char.encode())
+        putwch(char)
 
-def clrline():
-    putstr('\b'*80)
+
+def clr(amt):
+    putstr('\b'*amt)
+
 
 if __name__ == '__main__':
     host = '127.0.0.1'
