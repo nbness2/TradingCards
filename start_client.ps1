@@ -1,1 +1,2 @@
 python TCGClient.py
+PAUSE
